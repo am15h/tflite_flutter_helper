@@ -1,0 +1,1 @@
+library tflite_flutter_helper;
