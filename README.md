@@ -1,14 +1,9 @@
-# tfliteflutterhelperlibrary
+# TensorFlow Lite Flutter Helper Library
+
+## Unreleased: Work in progress
 
 TFLite Flutter Helper Library
 
-## Getting Started
+This package aims to make the pre-processing and post-processing
+tasks easier when using [`tflite_flutter`](https://www.github.com/am15h/tflite_flutter_plugin).
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
