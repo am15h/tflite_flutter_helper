@@ -1,47 +1,50 @@
+import 'dart:ffi';
 import 'dart:typed_data';
+import 'dart:math';
 
-import 'package:tflite_flutter/src/bindings/types.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
+import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
-import 'tensorbuffer.dart';
-
-class TensorBufferFloat extends TensorBuffer {
-  static final TfLiteType DATA_TYPE = TfLiteType.float32;
-
-  TensorBufferFloat(List<int> shape) : super(shape);
-  TensorBufferFloat.dynamic() : super.dynamic();
+class TensorBufferUint8 extends TensorBuffer {
+  TensorBufferUint8.dynamic() : super.dynamic();
+  TensorBufferUint8(List<int> shape) : super(shape);
 
   @override
   TfLiteType getDataType() {
-    return DATA_TYPE;
+    return TfLiteType.uint8;
   }
 
   @override
   List<double> getDoubleList() {
-    List<double> arr = byteData.buffer.asFloat32List();
+    List<double> arr = List(flatSize);
+    for (int i = 0; i < flatSize; i++) {
+      arr[i] = byteData.getFloat32(i * 4);
+    }
     return arr;
   }
 
   @override
   double getDoubleValue(int absIndex) {
-    return getDoubleList().elementAt(absIndex);
+    return byteData.getFloat32(absIndex * 4);
   }
 
   @override
   List<int> getIntList() {
-    List<int> arr = byteData.buffer.asInt32List();
+    List<int> arr = List(flatSize);
+    for (int i = 0; i < flatSize; i++) {
+      arr[i] = byteData.getInt32(i * 4);
+    }
     return arr;
   }
 
   @override
   int getIntValue(int absIndex) {
-    return getIntList().elementAt(absIndex);
+    return byteData.getInt32(absIndex * 4);
   }
 
   @override
   int getTypeSize() {
-    // returns size in bytes
     return 4;
   }
 
@@ -57,11 +60,17 @@ class TensorBufferFloat extends TensorBuffer {
 
     if (src is List<double>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setFloat32(i * 4, src[i]);
+        // TODO: Testing required here may not work
+        ByteData bdata = ByteData(4);
+        bdata.setFloat32(0, max(min(src[i], 255.0), 0.0));
+        byteData.setUint8(i, bdata.getUint8(0));
       }
     } else if (src is List<int>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setInt32(i * 4, src[i]);
+        // TODO: Testing required here may not work
+        ByteData bdata = ByteData(4);
+        bdata.setInt32(0, max(min(src[i], 255), 0));
+        byteData.setUint8(i, bdata.getUint8(0));
       }
     }
   }

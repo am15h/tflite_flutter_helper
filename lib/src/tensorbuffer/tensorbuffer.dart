@@ -71,7 +71,25 @@ abstract class TensorBuffer {
 
   void loadList(List<dynamic> src, {List<int> shape});
 
-  void loadBuffer(ByteBuffer buffer, {List<int> shape});
+  void loadBuffer(ByteBuffer buffer, {List<int> shape}) {
+    SupportPreconditions.checkNotNull(buffer,
+        message: "Byte Buffer cannot be null");
+    int flatSize = computeFlatSize(shape);
+    SupportPreconditions.checkArgument(
+        (ByteData.view(buffer).lengthInBytes == getTypeSize() * flatSize),
+        errorMessage: "The size of byte buffer and the shape do not match.");
+
+    if (!_isDynamic) {
+      SupportPreconditions.checkArgument(flatSize == this.flatSize,
+          errorMessage:
+              "The size of byte buffer and the size of the tensor buffer do not match.");
+    } else {
+      this.flatSize = flatSize;
+    }
+
+    this.shape = List<int>.from(shape);
+    this.byteData = ByteData.view(buffer);
+  }
 
   @protected
   TensorBuffer(List<int> shape) {
