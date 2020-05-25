@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:meta/meta.dart';
 
 abstract class TensorBuffer {
   /// Where the data is stored

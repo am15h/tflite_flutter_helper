@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 import 'operator.dart';
 import 'processor.dart';
+import 'package:meta/meta.dart';
 
 class SequentialProcessor<T> implements Processor<T> {
   @protected
@@ -11,7 +11,7 @@ class SequentialProcessor<T> implements Processor<T> {
   Map<String, List<int>> operatorIndex;
 
   @protected
-  SequentialProcessor(Builder<T> builder) {
+  SequentialProcessor(SequentialProcessorBuilder<T> builder) {
     operatorList = builder._operatorList;
     operatorIndex = Map.unmodifiable(builder._operatorIndex);
   }
@@ -25,16 +25,16 @@ class SequentialProcessor<T> implements Processor<T> {
   }
 }
 
-class Builder<T> {
+class SequentialProcessorBuilder<T> {
   final List<Operator<T>> _operatorList;
   final Map<String, List<int>> _operatorIndex;
 
   @protected
-  Builder()
+  SequentialProcessorBuilder()
       : _operatorList = [],
         _operatorIndex = {};
 
-  Builder<T> add(Operator<T> op) {
+  SequentialProcessorBuilder<T> add(Operator<T> op) {
     SupportPreconditions.checkNotNull(op,
         message: 'Adding null Op is illegal.');
     _operatorList.add(op);
