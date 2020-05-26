@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
+import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 
 abstract class TensorBuffer {
   /// Where the data is stored
@@ -24,11 +26,9 @@ abstract class TensorBuffer {
   static TensorBuffer createFixedSize(List<int> shape, TfLiteType dataType) {
     switch (dataType) {
       case TfLiteType.float32:
-        //TODO: return TensorBufferFloat()
-        return null;
+        return TensorBufferFloat(shape);
       case TfLiteType.uint8:
-        //TODO: return TensorBufferUInt8()
-        return null;
+        return TensorBufferUint8(shape);
       default:
         throw ArgumentError(
             'TensorBuffer does not support data type: \" +$dataType');
@@ -38,15 +38,36 @@ abstract class TensorBuffer {
   static TensorBuffer createDynamic(TfLiteType dataType) {
     switch (dataType) {
       case TfLiteType.float32:
-        //TODO: return TensorBufferFloat()
-        return null;
+        return TensorBufferFloat.dynamic();
       case TfLiteType.uint8:
-        //TODO: return TensorBufferUInt8()
-        return null;
+        return TensorBufferUint8.dynamic();
       default:
         throw ArgumentError(
             'TensorBuffer does not support data type: \" +$dataType');
     }
+  }
+
+  static TensorBuffer createFrom(TensorBuffer buffer, TfLiteType dataType) {
+    SupportPreconditions.checkNotNull(buffer,
+        message: "Cannot create a buffer from null");
+    TensorBuffer result;
+    if (buffer.isDynamic) {
+      result = createDynamic(dataType);
+    } else {
+      result = createFixedSize(buffer.shape, dataType);
+    }
+    // The only scenario we need float array is FLOAT32->FLOAT32, or we can always use INT as
+    // intermediate container.
+    // The assumption is not true when we support other data types.
+    if (buffer.getDataType() == TfLiteType.float32 &&
+        dataType == TfLiteType.float32) {
+      List<double> data = buffer.getDoubleList();
+      result.loadList(data, shape: buffer.shape);
+    } else {
+      List<int> data = buffer.getIntList();
+      result.loadList(data, shape: buffer.shape);
+    }
+    return result;
   }
 
   ByteBuffer getBuffer() => byteData.buffer;
