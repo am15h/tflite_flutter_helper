@@ -1,11 +1,12 @@
-import 'package:flutter/services.dart';
+import 'dart:io';
+
 import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
 class ImageConversion {
-  static void convertTensorBufferToImage(TensorBuffer buffer, Image image) {
+  static Image convertTensorBufferToImage(TensorBuffer buffer, Image image) {
     if (buffer.getDataType() != TfLiteType.uint8) {
       throw UnsupportedError(
         "Converting TensorBuffer of type ${buffer.getDataType()} to ARGB_8888 Bitmap is not supported yet.",
@@ -24,33 +25,32 @@ class ImageConversion {
       );
     }
 
-    List<int> intValues = List(w * h);
-    //TODO: check if the approach works
-    /*List<int> rgbValues = buffer.getIntList();
+    List<int> bytes = List(w * h * 3);
+    List<int> rgbValues = buffer.getIntList();
 
-    for (int i = 0, j = 0; i < intValues.length; i++) {
-      int r = rgbValues[j++];
-      int g = rgbValues[j++];
-      int b = rgbValues[j++];
-      intValues[i] = Color.fromRgb(r, g, b);
-    }*/
-    image = Image.fromBytes(w, h, intValues);
+    for (int i = 0, j = 0; i < bytes.length; i += 3) {
+      bytes[i] = rgbValues[j++];
+      bytes[i + 1] = rgbValues[j++];
+      bytes[i + 2] = rgbValues[j++];
+    }
+
+    return Image.fromBytes(w, h, bytes);
   }
 
   static void convertImageToTensorBuffer(Image image, TensorBuffer buffer) {
     int w = image.width;
     int h = image.height;
 
-    final bytesList = image.getBytes();
+    final bytesList = image.getBytes(format: Format.rgb);
 
     List<int> shape = [h, w, 3];
-    List<int> rgbValues = List(h * w * 3);
-    for (int i = 0, j = 0; i < bytesList.length - 3; i += 4) {
-      rgbValues[j++] = bytesList[i + 1];
-      rgbValues[j++] = bytesList[i + 2];
-      rgbValues[j++] = bytesList[i + 3];
-    }
+//    List<int> rgbValues = List(h * w * 3);
+//    for (int i = 0, j = 0; i < bytesList.length - 3; i += 3) {
+//      rgbValues[j++] = bytesList[i];
+//      rgbValues[j++] = bytesList[i + 1];
+//      rgbValues[j++] = bytesList[i + 2];
+//    }
 
-    buffer.loadList(rgbValues, shape: shape);
+    buffer.loadList(bytesList, shape: shape);
   }
 }

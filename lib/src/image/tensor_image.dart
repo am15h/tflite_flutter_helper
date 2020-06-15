@@ -18,10 +18,21 @@ class TensorImage {
     return tensorImage;
   }
 
+  static TensorImage fromTensorBuffer(TensorBuffer buffer) {
+    TensorImage tensorImage = TensorImage();
+    tensorImage.loadTensorBuffer(buffer);
+    return tensorImage;
+  }
+
   void loadImage(Image image) {
     SupportPreconditions.checkNotNull(image,
         message: "Cannot load null image.");
     _container.image = image;
+  }
+
+  void loadTensorBuffer(TensorBuffer buffer) {
+    checkImageTensorShape(buffer.getShape());
+    _container.bufferImage = buffer;
   }
 
   static void checkImageTensorShape(List<int> shape) {
@@ -55,7 +66,7 @@ class _ImageContainer {
   bool _isImageUpdated;
   final TfLiteType tfLiteType;
 
-  static final int argbElementBytes = 4;
+  static final int argbElementBytes = 3;
 
   _ImageContainer(this.tfLiteType);
 
@@ -75,7 +86,8 @@ class _ImageContainer {
       int w = shape[shape.length - 2];
       _image = Image(w, h);
     }
-    ImageConversion.convertTensorBufferToImage(tensorBuffer, image);
+
+    _image = ImageConversion.convertTensorBufferToImage(_bufferImage, _image);
     _isImageUpdated = true;
     return _image;
   }
