@@ -1,5 +1,5 @@
-import 'package:image/image.dart';
-import 'package:image/src/util/point.dart';
+import 'dart:math' show Point;
+import 'package:image/image.dart' show Image, copyRotate;
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 
@@ -28,7 +28,22 @@ class Rot90Op extends ImageOperator {
   @override
   Point inverseTransform(
       Point point, int inputImageHeight, int inputImageWidth) {
-    // TODO: implement inverseTransform
-    return null;
+    int inverseNumRotation = (4 - _numRotation) % 4;
+    int height = getOutputImageHeight(inputImageHeight, inputImageWidth);
+    int width = getOutputImageWidth(inputImageHeight, inputImageWidth);
+    return transformImpl(point, height, width, inverseNumRotation);
+  }
+
+  Point transformImpl(Point point, int height, int width, int numRotation) {
+    if (numRotation == 0) {
+      return point;
+    } else if (numRotation == 1) {
+      return Point(point.y, width - point.x);
+    } else if (numRotation == 2) {
+      return Point(width - point.x, height - point.y);
+    } else {
+      // numRotation == 3
+      return Point(height - point.y, point.x);
+    }
   }
 }

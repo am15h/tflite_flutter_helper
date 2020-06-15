@@ -1,4 +1,5 @@
-import 'package:image/image.dart';
+import 'dart:math';
+
 import 'package:tflite_flutter_helper/src/common/operator.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 

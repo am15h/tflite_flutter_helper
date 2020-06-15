@@ -1,5 +1,5 @@
-import 'package:image/image.dart';
-import 'package:image/src/util/point.dart';
+import 'package:image/image.dart' show Image, copyResize, Interpolation;
+import 'dart:math' show Point;
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 

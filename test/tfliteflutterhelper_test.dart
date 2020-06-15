@@ -1,3 +1,4 @@
+import 'dart:math' as m;
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -16,6 +17,7 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 // flutter test test
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
   group('tensorbuffer', () {
     group('uint8', () {
       test('static', () {
@@ -146,15 +148,11 @@ void main() {
             .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
       });
       test('resize with crop', () {
-        ImageProcessor imageProcessor = ImageProcessorBuilder()
-            .add(ResizeWithCropOrPadOp(1000, 2000))
-            .build();
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(ResizeWithCropOrPadOp(20, 20)).build();
 
         TensorImage processedImage =
             imageProcessor.process(TensorImage.fromImage(image));
-//
-//        expect(processedImage.height, 400);
-//        expect(processedImage.width, 800);
 
         File('test_assets/resize_crop.jpg')
             .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
@@ -173,6 +171,18 @@ void main() {
 
         File('test_assets/resize_pad.jpg')
             .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
+      });
+
+      test('inverse', () {
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(Rot90Op(2)).build();
+
+        final p = imageProcessor.inverseTransform(
+            m.Point(image.width / 2, image.height / 2),
+            image.height,
+            image.width);
+
+        expect(p == m.Point(image.width / 2, image.height / 2), true);
       });
     });
   });

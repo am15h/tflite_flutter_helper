@@ -1,5 +1,6 @@
-import 'package:image/image.dart';
-import 'package:image/src/util/point.dart';
+import 'dart:math' show Point;
+import 'package:image/image.dart' show Image, drawPixel;
+import 'dart:math';
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 
@@ -13,8 +14,6 @@ class ResizeWithCropOrPadOp implements ImageOperator {
 
   @override
   TensorImage apply(TensorImage image) {
-    print(_targetHeight);
-    print(_targetWidth);
     Image input = image.image;
     int srcL;
     int srcR;
@@ -53,16 +52,6 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       srcB = srcT + _targetHeight;
     }
 
-    print(dstL);
-    print(dstT);
-    print(dstB - dstT);
-    print(dstR - dstL);
-
-    print(srcL);
-    print(srcT);
-    print(srcB - srcT);
-    print(srcR - srcL);
-
     Image resized = _drawImage(_output, image.image,
         dstX: dstL,
         dstY: dstT,
@@ -80,21 +69,23 @@ class ResizeWithCropOrPadOp implements ImageOperator {
 
   @override
   int getOutputImageHeight(int inputImageHeight, int inputImageWidth) {
-    // TODO: implement getOutputImageHeight
-    return null;
+    return _targetHeight;
   }
 
   @override
   int getOutputImageWidth(int inputImageHeight, int inputImageWidth) {
-    // TODO: implement getOutputImageWidth
-    return null;
+    return _targetWidth;
   }
 
   @override
   Point inverseTransform(
       Point point, int inputImageHeight, int inputImageWidth) {
-    // TODO: implement inverseTransform
-    return null;
+    return _transformImpl(
+        point, _targetHeight, _targetWidth, inputImageHeight, inputImageWidth);
+  }
+
+  Point _transformImpl(Point point, int srcH, int srcW, int dstH, int dstW) {
+    return Point(point.x + (dstW - srcW) / 2, point.y + (dstH - srcH) / 2);
   }
 
   Image _drawImage(Image dst, Image src,
