@@ -13,6 +13,8 @@ class ResizeWithCropOrPadOp implements ImageOperator {
 
   @override
   TensorImage apply(TensorImage image) {
+    print(_targetHeight);
+    print(_targetWidth);
     Image input = image.image;
     int srcL;
     int srcR;
@@ -34,7 +36,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // cropping
       dstL = 0;
       dstR = _targetWidth;
-      srcL = (_targetWidth - w) ~/ 2;
+      srcL = (w - _targetWidth) ~/ 2;
       srcR = srcL + _targetWidth;
     }
     if (_targetHeight > h) {
@@ -51,15 +53,25 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       srcB = srcT + _targetHeight;
     }
 
+    print(dstL);
+    print(dstT);
+    print(dstB - dstT);
+    print(dstR - dstL);
+
+    print(srcL);
+    print(srcT);
+    print(srcB - srcT);
+    print(srcR - srcL);
+
     Image resized = _drawImage(_output, image.image,
         dstX: dstL,
         dstY: dstT,
-        dstH: dstB,
-        dstW: dstR,
+        dstH: dstB - dstT,
+        dstW: dstR - dstL,
         srcX: srcL,
         srcY: srcT,
-        srcH: srcB,
-        srcW: srcR);
+        srcH: srcB - srcT,
+        srcW: srcR - srcL);
 
     image.loadImage(resized);
 
@@ -94,7 +106,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       int srcY,
       int srcW,
       int srcH,
-      bool blend = true}) {
+      bool blend = false}) {
     dstX ??= 0;
     dstY ??= 0;
     srcX ??= 0;
