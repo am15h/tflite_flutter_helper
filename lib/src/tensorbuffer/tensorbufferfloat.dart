@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:tflite_flutter/src/bindings/types.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
@@ -19,7 +17,10 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   List<double> getDoubleList() {
-    List<double> arr = byteData.buffer.asFloat32List();
+    List<double> arr = List(flatSize);
+    for (int i = 0; i < flatSize; i++) {
+      arr[i] = byteData.getFloat32(i * 4);
+    }
     return arr;
   }
 
@@ -30,7 +31,10 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   List<int> getIntList() {
-    List<int> arr = byteData.buffer.asInt32List();
+    List<int> arr = List(flatSize);
+    for (int i = 0; i < flatSize; i++) {
+      arr[i] = byteData.getFloat32(i * 4).floor();
+    }
     return arr;
   }
 

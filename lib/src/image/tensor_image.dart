@@ -9,7 +9,8 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 class TensorImage {
   _ImageContainer _container;
 
-  TensorImage([TfLiteType dataType = TfLiteType.uint8]);
+  TensorImage([TfLiteType dataType = TfLiteType.uint8])
+      : _container = _ImageContainer(dataType);
 
   static TensorImage fromImage(Image image) {
     TensorImage tensorImage = TensorImage();

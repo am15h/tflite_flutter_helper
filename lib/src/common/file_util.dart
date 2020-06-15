@@ -32,4 +32,17 @@ class FileUtil {
     }
     return list;
   }
+
+  static List<String> loadLabelsFromFile(File file) {
+    final fileString = file.readAsStringSync();
+    var list = <String>[];
+    final newLineList = fileString.split('\n');
+    for (var i = 0; i < newLineList.length; i++) {
+      var entry = newLineList[i].trim();
+      if (entry.length > 0) {
+        list.add(entry);
+      }
+    }
+    return list;
+  }
 }

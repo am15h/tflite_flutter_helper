@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
@@ -40,12 +41,16 @@ class ImageConversion {
     int w = image.width;
     int h = image.height;
 
-    List<int> intValues = List(w * h);
+    final bytesList = image.getBytes();
 
-    //TODO: check if this approach works
-    final bytesBuffer = image.getBytes().buffer;
     List<int> shape = [h, w, 3];
+    List<int> rgbValues = List(h * w * 3);
+    for (int i = 0, j = 0; i < bytesList.length - 3; i += 4) {
+      rgbValues[j++] = bytesList[i + 1];
+      rgbValues[j++] = bytesList[i + 2];
+      rgbValues[j++] = bytesList[i + 3];
+    }
 
-    buffer.loadBuffer(bytesBuffer, shape: shape);
+    buffer.loadList(rgbValues, shape: shape);
   }
 }
