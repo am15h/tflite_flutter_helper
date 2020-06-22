@@ -1,4 +1,4 @@
-# imageclassification
+# Image Classification Flutter App
 
 Image Classification Example.
 

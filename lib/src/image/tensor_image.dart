@@ -38,7 +38,7 @@ class TensorImage {
     _container.image = image;
   }
 
-  void loadPixels(List pixels, List<int> shape) {
+  void loadRgbPixels(List pixels, List<int> shape) {
     checkImageTensorShape(shape);
     TensorBuffer buffer = TensorBuffer.createDynamic(dataType);
     buffer.loadList(pixels, shape: shape);

@@ -9,7 +9,7 @@ import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
-const sampleFileName = 'assets/goldfish.jpg';
+const sampleFileName = 'assets/greyfox.jpg';
 const modelFileName = 'mobilenet_v1_1.0_224_quant.tflite';
 const labelFileName = 'assets/labels_mobilenet_quant_v1_224.txt';
 
@@ -79,7 +79,7 @@ void main() {
               labels, probabilityProcessor.process(outputBuffer))
           .getMapWithFloatValue();
 
-      expect(labeledProb['goldfish'] > 0.98, true);
+      expect(labeledProb['grey fox'] > 0.98, true);
     });
 
     tearDownAll(() {

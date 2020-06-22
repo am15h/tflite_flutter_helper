@@ -23,7 +23,7 @@ dependencies:
   collection: ^1.14.11
 
   path_provider:
-  tflite_flutter: ^0.4.0
+  tflite_flutter: ^0.4.1
   tflite_flutter_helper:
     path:
       ../../

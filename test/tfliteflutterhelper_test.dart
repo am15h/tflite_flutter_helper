@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart';
 import 'package:tflite_flutter_helper/src/common/file_util.dart';
+import 'package:tflite_flutter_helper/src/image/image_conversions.dart';
 import 'package:tflite_flutter_helper/src/image/image_processor.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_with_crop_or_pad_op.dart';
@@ -14,9 +15,9 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 
-const int h = 400;
-const int w = 800;
-const String imageFileName = 'test_assets/pineapple.jpg';
+const int h = 100;
+const int w = 150;
+const String imageFileName = 'test_assets/greyfox.jpg';
 // flutter test test
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -94,13 +95,11 @@ void main() {
       test('load pixels', () {
         TensorImage tensorImage = TensorImage();
 
-        tensorImage.loadPixels(
+        tensorImage.loadRgbPixels(
             image.getBytes(format: Format.rgb), [inputHeight, inputWidth, 3]);
 
-//        File('test_assets/pixels.jpg').writeAsBytes(JpegEncoder().encodeImage(
-//            Image.fromBytes(
-//                inputWidth, inputHeight, image.getBytes(format: Format.rgb),
-//                format: Format.rgb)));
+        expect(tensorImage.image.height, inputHeight);
+        expect(tensorImage.image.width, inputWidth);
       });
 
       test('width height', () {
@@ -126,11 +125,6 @@ void main() {
         var tensorImage = TensorImage.fromTensorBuffer(tensorbuffer);
         expect(tensorImage.width, inputWidth);
         expect(tensorImage.height, inputHeight);
-
-//        File('test_assets/buffer3.jpg').writeAsBytes(JpegEncoder().encodeImage(
-//            Image.fromBytes(
-//                inputWidth, inputHeight, tensorImage.tensorBuffer.getIntList(),
-//                format: Format.rgb)));
       });
     });
 
