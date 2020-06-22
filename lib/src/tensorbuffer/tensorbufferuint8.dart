@@ -17,35 +17,32 @@ class TensorBufferUint8 extends TensorBuffer {
 
   @override
   List<double> getDoubleList() {
-    List<double> arr = List(flatSize);
-    for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getFloat32(i * 4);
-    }
-    return arr;
+    List<int> intList = getIntList();
+    return intList.map((i) => i.toDouble()).toList();
   }
 
   @override
   double getDoubleValue(int absIndex) {
-    return byteData.getFloat32(absIndex * 4);
+    return byteData.getFloat32(absIndex);
   }
 
   @override
   List<int> getIntList() {
     List<int> arr = List(flatSize);
     for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getInt32(i * 4);
+      arr[i] = byteData.getUint8(i);
     }
     return arr;
   }
 
   @override
   int getIntValue(int absIndex) {
-    return byteData.getInt32(absIndex * 4);
+    return byteData.getUint8(absIndex);
   }
 
   @override
   int getTypeSize() {
-    return 4;
+    return 1;
   }
 
   @override
@@ -60,17 +57,12 @@ class TensorBufferUint8 extends TensorBuffer {
 
     if (src is List<double>) {
       for (int i = 0; i < src.length; i++) {
-        // TODO: Testing required here may not work
-        ByteData bdata = ByteData(4);
-        bdata.setFloat32(0, max(min(src[i], 255.0), 0.0));
-        byteData.setUint8(i, bdata.getUint8(0));
+        // TODO: Implementation required
+        throw ArgumentError('List<double> not supported yet');
       }
     } else if (src is List<int>) {
       for (int i = 0; i < src.length; i++) {
-        // TODO: Testing required here may not work
-        ByteData bdata = ByteData(4);
-        bdata.setInt32(0, max(min(src[i], 255), 0));
-        byteData.setUint8(i, bdata.getUint8(0));
+        byteData.setUint8(i, max(min(src[i], 255), 0));
       }
     }
   }
