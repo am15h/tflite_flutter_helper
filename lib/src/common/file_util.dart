@@ -22,19 +22,15 @@ class FileUtil {
 
   static Future<List<String>> loadLabels(String fileAssetLocation) async {
     final fileString = await rootBundle.loadString('$fileAssetLocation');
-    var list = <String>[];
-    final newLineList = fileString.split('\n');
-    for (var i = 0; i < newLineList.length; i++) {
-      var entry = newLineList[i].trim();
-      if (entry.length > 0) {
-        list.add(entry);
-      }
-    }
-    return list;
+    return labelListFromString(fileString);
   }
 
   static List<String> loadLabelsFromFile(File file) {
     final fileString = file.readAsStringSync();
+    return labelListFromString(fileString);
+  }
+
+  static List<String> labelListFromString(String fileString) {
     var list = <String>[];
     final newLineList = fileString.split('\n');
     for (var i = 0; i < newLineList.length; i++) {

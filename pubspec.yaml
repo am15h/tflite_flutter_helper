@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
 
   path_provider:
-  tflite_flutter: ^0.3.0
+  tflite_flutter: ^0.4.0
   image: ^2.1.4
 
 

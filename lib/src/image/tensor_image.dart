@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:image/image.dart';
@@ -18,6 +19,13 @@ class TensorImage {
     return tensorImage;
   }
 
+  static TensorImage fromFile(File imageFile) {
+    Image image = decodeImage(imageFile.readAsBytesSync());
+    TensorImage tensorImage = TensorImage();
+    tensorImage.loadImage(image);
+    return tensorImage;
+  }
+
   static TensorImage fromTensorBuffer(TensorBuffer buffer) {
     TensorImage tensorImage = TensorImage();
     tensorImage.loadTensorBuffer(buffer);
@@ -28,6 +36,13 @@ class TensorImage {
     SupportPreconditions.checkNotNull(image,
         message: "Cannot load null image.");
     _container.image = image;
+  }
+
+  void loadPixels(List pixels, List<int> shape) {
+    checkImageTensorShape(shape);
+    TensorBuffer buffer = TensorBuffer.createDynamic(dataType);
+    buffer.loadList(pixels, shape: shape);
+    loadTensorBuffer(buffer);
   }
 
   void loadTensorBuffer(TensorBuffer buffer) {

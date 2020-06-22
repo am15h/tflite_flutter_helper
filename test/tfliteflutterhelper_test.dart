@@ -14,6 +14,9 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 
+const int h = 400;
+const int w = 800;
+const String imageFileName = 'test_assets/pineapple.jpg';
 // flutter test test
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +64,7 @@ void main() {
   });
 
   group('common', () {
-    test('file_util', () async {
+    test('file_util labels from file', () async {
       File file = File('test_assets/labels_mobilenet_quant_v1_224.txt');
       List<String> labels = FileUtil.loadLabelsFromFile(file);
       expect(labels[0], 'background');
@@ -69,20 +72,35 @@ void main() {
   });
 
   group('image', () {
-    Image image =
-        decodeImage(File('test_assets/goldfish.jpg').readAsBytesSync());
+    File imageFile = File(imageFileName);
+    Image image = decodeImage(imageFile.readAsBytesSync());
     final inputHeight = image.height;
     final inputWidth = image.width;
-
-    File('test_assets/asd.jpg').writeAsBytes(JpegEncoder().encodeImage(image));
 
     group('TensorImage', () {
       TensorImage tensorImage;
       TensorBuffer tensorbuffer;
 
+      test('fromFile', () {
+        tensorImage = TensorImage.fromFile(imageFile);
+        expect(tensorImage, isNotNull);
+      });
+
       test('fromImage', () {
         tensorImage = TensorImage.fromImage(image);
         expect(tensorImage, isNotNull);
+      });
+
+      test('load pixels', () {
+        TensorImage tensorImage = TensorImage();
+
+        tensorImage.loadPixels(
+            image.getBytes(format: Format.rgb), [inputHeight, inputWidth, 3]);
+
+//        File('test_assets/pixels.jpg').writeAsBytes(JpegEncoder().encodeImage(
+//            Image.fromBytes(
+//                inputWidth, inputHeight, image.getBytes(format: Format.rgb),
+//                format: Format.rgb)));
       });
 
       test('width height', () {
@@ -109,71 +127,63 @@ void main() {
         expect(tensorImage.width, inputWidth);
         expect(tensorImage.height, inputHeight);
 
-        File('test_assets/buffer3.jpg').writeAsBytes(JpegEncoder().encodeImage(
-            Image.fromBytes(
-                inputWidth, inputHeight, tensorImage.tensorBuffer.getIntList(),
-                format: Format.rgb)));
+//        File('test_assets/buffer3.jpg').writeAsBytes(JpegEncoder().encodeImage(
+//            Image.fromBytes(
+//                inputWidth, inputHeight, tensorImage.tensorBuffer.getIntList(),
+//                format: Format.rgb)));
       });
     });
 
     group('ImageProcessor', () {
       test('resize', () {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
-            .add(ResizeOp(400, 400, ResizeMethod.BILINEAR))
+            .add(ResizeOp(h, w, ResizeMethod.BILINEAR))
             .build();
 
         TensorImage processedImage =
             imageProcessor.process(TensorImage.fromImage(image));
 
-        expect(processedImage.height, 400);
-        expect(processedImage.width, 400);
-
-        File('test_assets/buffer.jpg')
-            .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
       });
 
       test('rot90', () {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(ResizeOp(h, w, ResizeMethod.NEAREST_NEIGHBOUR))
             .add(Rot90Op())
-            .add(ResizeOp(400, 800, ResizeMethod.NEAREST_NEIGHBOUR))
             .build();
 
         TensorImage processedImage =
             imageProcessor.process(TensorImage.fromImage(image));
 
-        expect(processedImage.height, 400);
-        expect(processedImage.width, 800);
-
-        File('test_assets/rot90.jpg')
-            .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
+        expect(processedImage.height, w);
+        expect(processedImage.width, h);
       });
       test('resize with crop', () {
         ImageProcessor imageProcessor =
-            ImageProcessorBuilder().add(ResizeWithCropOrPadOp(20, 20)).build();
+            ImageProcessorBuilder().add(ResizeWithCropOrPadOp(h, w)).build();
 
         TensorImage processedImage =
             imageProcessor.process(TensorImage.fromImage(image));
 
-        File('test_assets/resize_crop.jpg')
-            .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
       });
 
       test('resize with pad', () {
-        ImageProcessor imageProcessor = ImageProcessorBuilder()
-            .add(ResizeWithCropOrPadOp(3000, 4000))
-            .build();
+        int h = 3000;
+        int w = 4000;
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(ResizeWithCropOrPadOp(h, w)).build();
 
         TensorImage processedImage =
             imageProcessor.process(TensorImage.fromImage(image));
 
-        expect(processedImage.height, 3000);
-        expect(processedImage.width, 4000);
-
-        File('test_assets/resize_pad.jpg')
-            .writeAsBytes(JpegEncoder().encodeImage(processedImage.image));
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
       });
 
-      test('inverse', () {
+      test('inverse transform', () {
         ImageProcessor imageProcessor =
             ImageProcessorBuilder().add(Rot90Op(2)).build();
 
