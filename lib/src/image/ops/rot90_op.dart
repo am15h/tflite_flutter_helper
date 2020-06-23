@@ -3,11 +3,19 @@ import 'package:image/image.dart' show Image, copyRotate;
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 
+/// Rotates image counter-clockwise.
 class Rot90Op extends ImageOperator {
   int _numRotation;
 
+  /// Creates a Rot90 Op which will rotate image by [k] * 90 degree clockwise.
+  ///
+  /// If [k] is negative image is rotated counter-clockwise.
   Rot90Op([int k = 1]) : _numRotation = (k % 4);
 
+  /// Applies the defined rotation on [image] and returns the result.
+  ///
+  /// Note: the content of input [image] will change, and [image] is the same instance
+  /// with the output.
   @override
   TensorImage apply(TensorImage image) {
     Image rotated = copyRotate(image.image, 90 * _numRotation);

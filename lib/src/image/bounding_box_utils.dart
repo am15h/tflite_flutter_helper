@@ -5,7 +5,52 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
+/// Helper class for converting values that represents bounding boxes into rectangles.
+///
+/// The class provides a static function to create bounding boxes as {@link RectF} from different
+/// types of configurations.
+///
+/// Generally, a bounding box could be represented by 4 double values, but the values could be
+/// interpreted in many ways. Three [BoundingBoxType] of configurations are supported, and the order of
+/// elements in each type is configurable as well.
 class BoundingBoxUtils {
+  /// Creates a list of bounding boxes from a [TensorBuffer] [tensor] which represents bounding boxes.
+  ///
+  /// [valueIndex] denotes the order of the elements defined in each bounding box type. An empty
+  /// index list represent the default order of each bounding box type. For example, to denote
+  /// the default order of BOUNDARIES, [left, top, right, bottom], the index should be [0, 1, 2,
+  /// 3]. To denote the order [left, right, top, bottom], the order should be [0, 2, 1, 3].
+  /// The index list can be applied to all bounding box types to adjust the order of their
+  /// corresponding underlying elements.
+  ///
+  /// [boundingBoxAxis] specifies the index of the dimension that represents bounding box. The
+  /// size of that dimension is required to be 4. Index here starts from 0. For example, if the
+  /// tensor has shape 4x10, the axis for bounding boxes is likely to be 0. For shape 10x4, the
+  /// axis is likely to be 1 (or -1, equivalently).
+  ///
+  /// [boundingBoxType] defines how values should be converted into boxes. See [BoundingBoxType]
+  ///
+  /// [coordinateType] defines how values are interpreted to coordinates. See [CoordinateType]
+  ///
+  /// [height] is height of the image which the boxes belong to. Only has effects when [coordinateType]
+  /// is [CoordinateType.RATIO]
+  ///
+  /// [width] is width of the image which the boxes belong to. Only has effects when [coordinateType]
+  /// is [CoordinateType.RATIO]
+  ///
+  /// Returns A list of bounding boxes [List<Rect>] that the [tensor] represents. All dimensions except
+  /// [boundingBoxAxis] will be collapsed with order kept. For example, given
+  /// [tensor] with shape [1, 4, 10, 2] and [boundingBoxAxis = 1], The result will be a list
+  /// of 20 bounding boxes.
+  ///
+  /// Throws [ArgumentError] if size of bounding box dimension (set by
+  /// [boundingBoxAxis]) is not 4.
+  ///
+  /// Throws [ArgumentError] if [boundingBoxAxis] is not in [(-(D+1), D)] where
+  /// [D] is the number of dimensions of the [tensor].
+  ///
+  /// Throws [ArgumentError] if [tensor] has data type other than
+  /// [TfLiteType.float32].
   static List<Rect> convert({
     TensorBuffer tensor,
     List<int> valueIndex = const <int>[0, 1, 2, 3],
@@ -34,7 +79,7 @@ class BoundingBoxUtils {
     SupportPreconditions.checkArgument(
       valueIndex.length == 4,
       errorMessage:
-          "Bounding box index array length ${valueIndex.length} is not 4. Got index array $valueIndex",
+          "Bounding box index list length ${valueIndex.length} is not 4. Got index list $valueIndex",
     );
     SupportPreconditions.checkArgument(
         tensor.getDataType() == TfLiteType.float32,
@@ -106,8 +151,10 @@ class BoundingBoxUtils {
       CoordinateType coordinateType, int height, int width) {
     if (coordinateType == CoordinateType.PIXEL) {
       return Rect.fromLTWH(values[0], values[1], values[2], values[3]);
+    } else {
+      throw UnsupportedError(
+          'CoordinateType.RATIO not supported with BoundingBoxType.UPPER_LEFT');
     }
-    //TODO: CoordinateType.RATIO
   }
 
   static Rect _convertFromCenter(List<double> values,
@@ -117,11 +164,36 @@ class BoundingBoxUtils {
           center: Offset(values[0], values[1]),
           width: values[2],
           height: values[3]);
+    } else {
+      throw UnsupportedError(
+          'CoordinateType.RATIO not supported with BoundingBoxType.CENTER');
     }
-    //TODO: CoordinateType.RATIO
   }
 }
 
-enum BoundingBoxType { BOUNDARIES, UPPER_LEFT, CENTER }
+/// Denotes how a bounding box is represented.
+enum BoundingBoxType {
+  /// Represents the bounding box by using the combination of boundaries, [left, top, right,
+  /// bottom]. The default order is [left, top, right, bottom]. Other orders can be indicated by an
+  /// index list.
+  BOUNDARIES,
 
-enum CoordinateType { RATIO, PIXEL }
+  /// Represents the bounding box by using the upper_left corner, width and height. The default
+  /// order is [upper_left_x, upper_left_y, width, height]. Other orders can be indicated by an
+  /// index list.
+  UPPER_LEFT,
+
+  /// Represents the bounding box by using the center of the box, width and height. The default
+  /// order is [center_x, center_y, width, height]. Other orders can be indicated by an index
+  /// list.
+  CENTER
+}
+
+/// Denotes if the coordinates are actual pixels or relative ratios.
+enum CoordinateType {
+  /// The coordinates are relative ratios in range [0, 1]. */
+  RATIO,
+
+  /// The coordinates are actual pixel values.
+  PIXEL
+}
