@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' as f;
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
@@ -62,7 +62,7 @@ class Classifier {
         .process(_inputImage);
   }
 
-  Future<MapEntry<String, double>> predict(File imageFile) async {
+  Future<Category> predict(File imageFile) async {
     _inputImage = TensorImage.fromFile(imageFile);
     _inputImage = _preProcess();
 
@@ -73,8 +73,8 @@ class Classifier {
             _labels, _probabilityProcessor.process(_outputBuffer))
         .getMapWithFloatValue();
 
-    final pred = await compute(getTopProbability, labeledProb);
-    return pred;
+    final pred = await f.compute(getTopProbability, labeledProb);
+    return Category(pred.key, pred.value);
   }
 }
 

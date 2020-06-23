@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' as f;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imageclassification/Classifier.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 void main() => runApp(MyApp());
 
@@ -35,8 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Image _imageWidget;
 
-  String prediction;
-  String confidence;
+  Category category;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -62,10 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final pred = _classifier.predict(_image);
     int en = DateTime.now().millisecondsSinceEpoch;
     print('Time: ${en - st}');
-    pred.then((s) {
+    pred.then((category) {
       setState(() {
-        prediction = s.key;
-        confidence = s.value.toStringAsFixed(3);
+        this.category = category;
       });
     });
   }
@@ -95,14 +95,16 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 36,
           ),
           Text(
-            prediction ?? '',
+            category != null ? category.label : '',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: 8,
           ),
           Text(
-            confidence != null ? 'Confidence: $confidence' : '',
+            category != null
+                ? 'Confidence: ${category.score.toStringAsFixed(3)}'
+                : '',
             style: TextStyle(fontSize: 16),
           ),
         ],
