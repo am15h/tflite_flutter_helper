@@ -1,12 +1,18 @@
 import 'package:quiver/core.dart';
 
+/// Category is a util class, contains a label and a float value. Typically it's used as result of
+/// classification tasks.
 class Category {
   String _label;
   double _score;
 
+  /// Constructs a Category.
   Category(this._label, this._score);
 
+  /// Gets the reference of category's label.
   String get label => _label;
+
+  /// Gets the score of the category.
   double get score => _score;
 
   @override

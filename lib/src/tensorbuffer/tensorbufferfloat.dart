@@ -4,9 +4,14 @@ import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 
 import 'tensorbuffer.dart';
 
+/// Represents data buffer with float(double) values.
 class TensorBufferFloat extends TensorBuffer {
   static final TfLiteType DATA_TYPE = TfLiteType.float32;
 
+  /// Creates a [TensorBufferFloat] with specified [shape].
+  ///
+  /// Throws [ArgumentError.notNull] if [shape] is null.
+  /// Throws [ArgumentError] if [shape] has non-positive elements.
   TensorBufferFloat(List<int> shape) : super(shape);
   TensorBufferFloat.dynamic() : super.dynamic();
 
