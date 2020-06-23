@@ -89,10 +89,10 @@ class _ImageContainer {
     if (_isImageUpdated) return _image;
     if (!_isBufferUpdated)
       throw StateError(
-          "Both buffer and bitmap data are obsolete. Forgot to call TensorImage#load?");
+          "Both buffer and bitmap data are obsolete. Forgot to call TensorImage.loadImage?");
     if (_bufferImage.getDataType() != TfLiteType.uint8) {
       throw StateError(
-          "TensorImage is holding a float-value image which is not able to convert a Bitmap.");
+          "TensorImage is holding a float-value image which is not able to convert a Image.");
     }
     int reqAllocation = _bufferImage.getFlatSize() * argbElementBytes;
     if (_image == null || _image.getBytes().length < reqAllocation) {

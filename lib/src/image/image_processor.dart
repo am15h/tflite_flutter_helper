@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:tflite_flutter_helper/src/common/operator.dart';
 import 'package:tflite_flutter_helper/src/common/sequential_processor.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
+import 'package:tflite_flutter_helper/src/common/tensor_operator.dart';
+import 'package:tflite_flutter_helper/src/image/ops/tensor_operator_wrapper.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 
 import 'image_operator.dart';
@@ -76,9 +78,16 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
 class ImageProcessorBuilder extends SequentialProcessorBuilder<TensorImage> {
   ImageProcessorBuilder() : super();
 
-  ImageProcessorBuilder add(Operator<TensorImage> op) {
-    super.add(op);
-    return this;
+  ImageProcessorBuilder add(Operator op) {
+    if (op is ImageOperator) {
+      super.add(op);
+      return this;
+    } else if (op is TensorOperator) {
+      return this.add(TensorOperatorWrapper(op));
+    } else {
+      throw UnsupportedError(
+          '${op.runtimeType} is not supported, only ImageOperator and TensorOperator is supported');
+    }
   }
 
   ImageProcessor build() {
