@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart';
 import 'package:tflite_flutter_helper/src/common/file_util.dart';
+import 'package:tflite_flutter_helper/src/common/ops/normailze_op.dart';
 import 'package:tflite_flutter_helper/src/image/image_conversions.dart';
 import 'package:tflite_flutter_helper/src/image/image_processor.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
@@ -187,6 +188,27 @@ void main() {
             image.width);
 
         expect(p == m.Point(image.width / 2, image.height / 2), true);
+      });
+
+      test('tensor operator wrapper', () {
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(NormalizeOp(127.5, 127.5)).build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        expect(processedImage, isNotNull);
+      });
+
+      test('tensor operator wrapper', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(NormalizeOp.multipleChannels([127.5, 0, 0], [127.5, 1, 1]))
+            .build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        expect(processedImage, isNotNull);
       });
     });
   });
