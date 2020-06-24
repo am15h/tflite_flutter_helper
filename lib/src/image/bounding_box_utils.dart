@@ -7,7 +7,7 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
 /// Helper class for converting values that represents bounding boxes into rectangles.
 ///
-/// The class provides a static function to create bounding boxes as {@link RectF} from different
+/// The class provides a static function to create bounding boxes as [Rect] from different
 /// types of configurations.
 ///
 /// Generally, a bounding box could be represented by 4 double values, but the values could be
@@ -18,8 +18,8 @@ class BoundingBoxUtils {
   ///
   /// [valueIndex] denotes the order of the elements defined in each bounding box type. An empty
   /// index list represent the default order of each bounding box type. For example, to denote
-  /// the default order of BOUNDARIES, [left, top, right, bottom], the index should be [0, 1, 2,
-  /// 3]. To denote the order [left, right, top, bottom], the order should be [0, 2, 1, 3].
+  /// the default order of BOUNDARIES, {left, top, right, bottom}, the index should be {0, 1, 2,
+  /// 3}. To denote the order {left, right, top, bottom}, the order should be {0, 2, 1, 3}.
   /// The index list can be applied to all bounding box types to adjust the order of their
   /// corresponding underlying elements.
   ///
@@ -40,13 +40,13 @@ class BoundingBoxUtils {
   ///
   /// Returns A list of bounding boxes [List<Rect>] that the [tensor] represents. All dimensions except
   /// [boundingBoxAxis] will be collapsed with order kept. For example, given
-  /// [tensor] with shape [1, 4, 10, 2] and [boundingBoxAxis = 1], The result will be a list
+  /// [tensor] with shape {1, 4, 10, 2} and [boundingBoxAxis = 1], The result will be a list
   /// of 20 bounding boxes.
   ///
   /// Throws [ArgumentError] if size of bounding box dimension (set by
   /// [boundingBoxAxis]) is not 4.
   ///
-  /// Throws [ArgumentError] if [boundingBoxAxis] is not in [(-(D+1), D)] where
+  /// Throws [ArgumentError] if [boundingBoxAxis] is not in {(-(D+1), D)} where
   /// [D] is the number of dimensions of the [tensor].
   ///
   /// Throws [ArgumentError] if [tensor] has data type other than
@@ -173,25 +173,25 @@ class BoundingBoxUtils {
 
 /// Denotes how a bounding box is represented.
 enum BoundingBoxType {
-  /// Represents the bounding box by using the combination of boundaries, [left, top, right,
-  /// bottom]. The default order is [left, top, right, bottom]. Other orders can be indicated by an
+  /// Represents the bounding box by using the combination of boundaries, [ left, top, right,
+  /// bottom ]. The default order is [ left, top, right, bottom ]. Other orders can be indicated by an
   /// index list.
   BOUNDARIES,
 
   /// Represents the bounding box by using the upper_left corner, width and height. The default
-  /// order is [upper_left_x, upper_left_y, width, height]. Other orders can be indicated by an
+  /// order is [ upper_left_x, upper_left_y, width, height ]. Other orders can be indicated by an
   /// index list.
   UPPER_LEFT,
 
   /// Represents the bounding box by using the center of the box, width and height. The default
-  /// order is [center_x, center_y, width, height]. Other orders can be indicated by an index
+  /// order is [ center_x, center_y, width, height ]. Other orders can be indicated by an index
   /// list.
   CENTER
 }
 
 /// Denotes if the coordinates are actual pixels or relative ratios.
 enum CoordinateType {
-  /// The coordinates are relative ratios in range [0, 1]. */
+  /// The coordinates are relative ratios in range {0, 1}. */
   RATIO,
 
   /// The coordinates are actual pixel values.

@@ -68,7 +68,7 @@ class TensorLabel {
   /// Creates a TensorLabel object which is able to label on one axis of multi-dimensional tensors.
   ///
   /// <p>Note: The labels are applied on the first axis whose size is larger than 1. For example, if
-  /// the shape of the tensor is [1, 10, 3], the labels will be applied on axis 1 (id starting from
+  /// the shape of the tensor is {1, 10, 3}, the labels will be applied on axis 1 (id starting from
   /// 0), and size of {@code axisLabels} should be 10 as well.
   ///
   /// [axisLabels] is list of labels, whose size should be same with the size of the tensor on

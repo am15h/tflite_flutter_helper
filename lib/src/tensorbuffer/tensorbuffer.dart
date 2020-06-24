@@ -62,7 +62,7 @@ abstract class TensorBuffer {
   }
 
   /// Creates an empty dynamic [TensorBuffer] with specified [TfLiteType]. The shape of the
-  /// created [TensorBuffer] is [0].
+  /// created [TensorBuffer] is {0}.
   ///
   /// Dynamic TensorBuffers will reallocate memory when loading arrays or data buffers of
   /// different buffer sizes.
@@ -127,8 +127,8 @@ abstract class TensorBuffer {
   /// uint8 to double.
   ///
   /// ```
-  /// For example, a TensorBuffer with shape [2, 3] that represents the following list,
-  /// [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]].
+  /// For example, a TensorBuffer with shape {2, 3} that represents the following list,
+  /// {{0.0, 1.0, 2.0}, {3.0, 4.0, 5.0}}.
   ///
   /// The fourth element (whose value is 3.0) in the TensorBuffer can be retrieved by:
   /// double v = tensorBuffer.getDoubleValue(3);
@@ -137,8 +137,8 @@ abstract class TensorBuffer {
 
   /// Returns an int array of the values stored in this buffer. If the buffer is of different type
   /// than int, the values will be converted into int, and loss of precision may apply. For example,
-  /// getting an int array from a [TensorBufferFloat] with values [400.32, 23.04], the output
-  /// is [400, 23].
+  /// getting an int array from a [TensorBufferFloat] with values {400.32, 23.04}, the output
+  /// is {400, 23}.
   List<int> getIntList();
 
   /// Returns an int value at [absIndex].
@@ -155,9 +155,9 @@ abstract class TensorBuffer {
 
   /// Loads an List<int> into this buffer with specific [shape]. If the buffer is of different types
   /// than int, the values will be converted into the buffer's type before being loaded into the
-  /// buffer, and loss of precision may apply. For example, loading an List<int> with values [400,
-  /// -23] into a [TensorBufferUint8] , the values will be clamped to [0, 255] and then be
-  /// casted to uint8 by [255, 0].
+  /// buffer, and loss of precision may apply. For example, loading an List<int> with values {400,
+  /// -23} into a [TensorBufferUint8] , the values will be clamped to {0, 255} and then be
+  /// casted to uint8 by {255, 0}.
   ///
   /// If [shape] is null then [TensorBuffer.shape] is used.
   void loadList(List<dynamic> src, {List<int> shape});

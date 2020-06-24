@@ -8,7 +8,7 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 ///
 /// Example Usage:
 ///
-/// ```
+/// ```dart
 ///   TensorProcessor processor = TensorProcessorBuilder().add(NormalizeOp(1.0, 2.0)).build();
 ///   TensorBuffer anotherTensorBuffer = processor.process(tensorBuffer);
 /// ```
@@ -35,7 +35,7 @@ class TensorProcessorBuilder extends SequentialProcessorBuilder<TensorBuffer> {
     return this;
   }
 
-  /// Completes the building process and gets the [TensorProcessor] instance. */
+  /// Completes the building process and gets the [TensorProcessor] instance.
   @override
   SequentialProcessor<TensorBuffer> build() {
     return TensorProcessor._(this);
