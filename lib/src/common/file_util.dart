@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+/// File I/O utilities.
 class FileUtil {
   static Future<File> loadFileOnDevice(String fileAssetLocation) async {
     final appDir = await getTemporaryDirectory();

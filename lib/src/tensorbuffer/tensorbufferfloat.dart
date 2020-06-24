@@ -1,12 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:tflite_flutter/src/bindings/types.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 
 import 'tensorbuffer.dart';
 
+/// Represents data buffer with float(double) values.
 class TensorBufferFloat extends TensorBuffer {
   static final TfLiteType DATA_TYPE = TfLiteType.float32;
 
+  /// Creates a [TensorBufferFloat] with specified [shape].
+  ///
+  /// Throws [ArgumentError.notNull] if [shape] is null.
+  /// Throws [ArgumentError] if [shape] has non-positive elements.
   TensorBufferFloat(List<int> shape) : super(shape);
   TensorBufferFloat.dynamic() : super.dynamic();
 
@@ -19,7 +26,7 @@ class TensorBufferFloat extends TensorBuffer {
   List<double> getDoubleList() {
     List<double> arr = List(flatSize);
     for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getFloat32(i * 4);
+      arr[i] = byteData.getFloat32(i * 4, endian);
     }
     return arr;
   }
@@ -33,7 +40,7 @@ class TensorBufferFloat extends TensorBuffer {
   List<int> getIntList() {
     List<int> arr = List(flatSize);
     for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getFloat32(i * 4).floor();
+      arr[i] = byteData.getFloat32(i * 4, endian).floor();
     }
     return arr;
   }
@@ -61,12 +68,15 @@ class TensorBufferFloat extends TensorBuffer {
 
     if (src is List<double>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setFloat32(i * 4, src[i]);
+        byteData.setFloat32(i * 4, src[i], endian);
       }
     } else if (src is List<int>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setInt32(i * 4, src[i]);
+        byteData.setFloat32(i * 4, src[i].toDouble(), endian);
       }
+    } else {
+      throw ArgumentError(
+          'Only List<double> and List<int> are supported but src is: ${src.runtimeType}');
     }
   }
 }

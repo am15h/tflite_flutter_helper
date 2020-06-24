@@ -2,16 +2,31 @@ import 'dart:math' show Point;
 import 'package:image/image.dart' show Image, drawPixel;
 import 'dart:math';
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
+import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 
+/// As a computation unit for processing images, it could resize image to predefined size.
+///
+/// It will not stretch or compress the content of image. However, to fit the new size, it crops
+/// or pads pixels. When it crops image, it performs a center-crop; when it pads pixels, it performs
+/// a zero-padding.
+///
+/// See [ResizeOp] for resizing images while stretching / compressing the content.
 class ResizeWithCropOrPadOp implements ImageOperator {
   final int _targetHeight;
   final int _targetWidth;
   final Image _output;
 
+  /// Creates a ResizeWithCropOrPadOp which could crop/pad images to height: [_targetHeight] &
+  /// width: [_targetWidth]. It adopts center-crop and zero-padding.
   ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth)
       : _output = Image(_targetWidth, _targetHeight);
 
+  /// Applies the defined resizing with cropping or/and padding on [image] and returns the
+  /// result.
+  ///
+  /// Note: the content of input [image] will change, and [image] is the same instance
+  /// with the output.
   @override
   TensorImage apply(TensorImage image) {
     Image input = image.image;

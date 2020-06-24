@@ -1,12 +1,21 @@
 import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
+import 'package:tflite_flutter_helper/src/image/image_processor.dart';
 import 'operator.dart';
 import 'processor.dart';
 import 'package:meta/meta.dart';
 
+/// A processor base class that chains a serial of [Operator] of type [T]
+/// and executes them.
+///
+/// Typically, users could use its subclasses, e.g. [ImageProcessor]
+/// rather than directly use this one.
 class SequentialProcessor<T> implements Processor<T> {
+  /// List of operators added to this [SequentialProcessor].
   @protected
   List<Operator<T>> operatorList;
 
+  /// The [Map] between the operator name and the corresponding op indexes in [operatorList].
+  /// An operator may be added multiple times into this [SequentialProcessor].
   @protected
   Map<String, List<int>> operatorIndex;
 
@@ -25,6 +34,7 @@ class SequentialProcessor<T> implements Processor<T> {
   }
 }
 
+/// The builder class to build a Sequential Processor.
 class SequentialProcessorBuilder<T> {
   final List<Operator<T>> _operatorList;
   final Map<String, List<int>> _operatorIndex;

@@ -1,7 +1,7 @@
 class SupportPreconditions {
   static T checkNotNull<T extends Object>(T reference, {Object message}) {
     if (reference == null) {
-      throw ArgumentError(
+      throw ArgumentError.notNull(
           _resolveMessage(message, "The object reference is null."));
     }
     return reference;

@@ -1,7 +1,13 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' as f;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imageclassification/Classifier.dart';
+import 'package:imageclassification/classifier.dart';
+import 'package:imageclassification/classifier_quant.dart';
+import 'package:logger/logger.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+
+import 'classifier_float.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,13 +36,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Classifier _classifier;
 
+  var logger = Logger();
+
   File _image;
   final picker = ImagePicker();
 
   Image _imageWidget;
 
-  String prediction;
-  String confidence;
+  Category category;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -54,18 +61,17 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _classifier = Classifier();
+    _classifier = ClassifierQuant();
   }
 
   void _predict() {
     int st = DateTime.now().millisecondsSinceEpoch;
     final pred = _classifier.predict(_image);
-    int en = DateTime.now().millisecondsSinceEpoch;
-    print('Time: ${en - st}');
-    pred.then((s) {
+    pred.then((category) {
+      int en = DateTime.now().millisecondsSinceEpoch;
+      logger.d('Total Time: ${en - st}');
       setState(() {
-        prediction = s.key;
-        confidence = s.value.toStringAsFixed(3);
+        this.category = category;
       });
     });
   }
@@ -95,14 +101,16 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 36,
           ),
           Text(
-            prediction ?? '',
+            category != null ? category.label : '',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: 8,
           ),
           Text(
-            confidence != null ? 'Confidence: $confidence' : '',
+            category != null
+                ? 'Confidence: ${category.score.toStringAsFixed(3)}'
+                : '',
             style: TextStyle(fontSize: 16),
           ),
         ],

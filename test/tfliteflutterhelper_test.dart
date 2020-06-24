@@ -4,8 +4,10 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/common/file_util.dart';
-import 'package:tflite_flutter_helper/src/image/image_conversions.dart';
+import 'package:tflite_flutter_helper/src/common/ops/normailze_op.dart';
+import 'package:tflite_flutter_helper/src/common/tensor_processor.dart';
 import 'package:tflite_flutter_helper/src/image/image_processor.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_with_crop_or_pad_op.dart';
@@ -32,6 +34,15 @@ void main() {
         expect(tensorBuffer.getDoubleList(), <double>[1, 2, 3, 4, 5, 6]);
       });
 
+      test('static', () {
+        TensorBuffer tensorBuffer =
+            TensorBuffer.createFixedSize([1, 3, 2], TfLiteType.uint8);
+        ByteBuffer buffer = Uint8List.fromList([1, 2, 3, 4, 5, 6]).buffer;
+        tensorBuffer.loadBuffer(buffer);
+        expect(tensorBuffer.getIntList(), [1, 2, 3, 4, 5, 6]);
+        expect(tensorBuffer.getDoubleList(), <double>[1, 2, 3, 4, 5, 6]);
+      });
+
       test('dynamic', () {
         TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
         ByteBuffer buffer = Uint8List.fromList([1, 2, 3, 4, 5, 6]).buffer;
@@ -46,6 +57,13 @@ void main() {
         tensorBuffer.loadList(list, shape: [1, 3, 2]);
         expect(tensorBuffer.getIntList(), [1, 2, 3, 4, 5, 255]);
       });
+
+      test('load list float', () {
+        TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
+        List<double> list = [1, 2, 883, -4, 5, 255.0];
+        tensorBuffer.loadList(list, shape: [1, 3, 2]);
+        expect(tensorBuffer.getIntList(), [1, 2, 255, 0, 5, 255]);
+      });
     });
 
     group('float', () {
@@ -54,11 +72,43 @@ void main() {
         var bdata = ByteData(16);
 
         for (int i = 0, j = 1; i < 16; i += 4, j++)
-          bdata.setFloat32(i, j.toDouble());
+          bdata.setFloat32(i, j.toDouble(), Endian.little);
 
         tensorBuffer.loadBuffer(bdata.buffer);
         expect(tensorBuffer.getDoubleList(), <double>[1, 2, 3, 4]);
 
+        expect(tensorBuffer.getIntList(), [1, 2, 3, 4]);
+      });
+
+      test('static', () {
+        TensorBuffer tensorBuffer =
+            TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
+        var bdata = ByteData(16);
+
+        for (int i = 0, j = 1; i < 16; i += 4, j++)
+          bdata.setFloat32(i, j.toDouble(), Endian.little);
+
+        tensorBuffer.loadBuffer(bdata.buffer);
+        expect(tensorBuffer.getDoubleList(), <double>[1, 2, 3, 4]);
+
+        expect(tensorBuffer.getIntList(), [1, 2, 3, 4]);
+      });
+
+      test('load list int', () {
+        TensorBuffer tensorBuffer =
+            TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
+
+        tensorBuffer.loadList(<int>[1, 2, 3, 4], shape: [1, 2, 2]);
+        expect(tensorBuffer.getDoubleList(), <double>[1, 2, 3, 4]);
+        expect(tensorBuffer.getIntList(), [1, 2, 3, 4]);
+      });
+
+      test('load list float', () {
+        TensorBuffer tensorBuffer =
+            TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
+
+        tensorBuffer.loadList(<double>[1.0, 2.0, 3.0, 4.0], shape: [1, 2, 2]);
+        expect(tensorBuffer.getDoubleList(), <double>[1.0, 2.0, 3.0, 4.0]);
         expect(tensorBuffer.getIntList(), [1, 2, 3, 4]);
       });
     });
@@ -69,6 +119,21 @@ void main() {
       File file = File('test_assets/labels_mobilenet_quant_v1_224.txt');
       List<String> labels = FileUtil.loadLabelsFromFile(file);
       expect(labels[0], 'background');
+    });
+
+    group('ops', () {
+      test('normalize', () {
+        TensorBuffer tensorBuffer =
+            TensorBuffer.createFixedSize([3], TfLiteType.float32);
+        tensorBuffer.loadList(<double>[0, 255, 127.5], shape: [3]);
+
+        final processor =
+            TensorProcessorBuilder().add(NormalizeOp(127.5, 127.5)).build();
+
+        tensorBuffer = processor.process(tensorBuffer);
+
+        expect(tensorBuffer.getDoubleList(), [-1, 1, 0]);
+      });
     });
   });
 
@@ -187,6 +252,29 @@ void main() {
             image.width);
 
         expect(p == m.Point(image.width / 2, image.height / 2), true);
+      });
+
+      test('tensor operator wrapper', () {
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(NormalizeOp(127.5, 127.5)).build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        for (var i in processedImage.tensorBuffer.getDoubleList()) {
+          expect(-1 <= i && i <= 1, true);
+        }
+      });
+      test('tensor operator wrapper', () {
+        ImageProcessor imageProcessor =
+            ImageProcessorBuilder().add(NormalizeOp(0, 1)).build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        for (var i in processedImage.tensorBuffer.getDoubleList()) {
+          expect(0 <= i && i <= 255, true);
+        }
       });
     });
   });

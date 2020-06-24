@@ -5,11 +5,14 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
+/// Implements some stateless image conversion methods.
+///
+/// This class is an internal helper.
 class ImageConversion {
   static Image convertTensorBufferToImage(TensorBuffer buffer, Image image) {
     if (buffer.getDataType() != TfLiteType.uint8) {
       throw UnsupportedError(
-        "Converting TensorBuffer of type ${buffer.getDataType()} to ARGB_8888 Bitmap is not supported yet.",
+        "Converting TensorBuffer of type ${buffer.getDataType()} to Image is not supported yet.",
       );
     }
     List<int> shape = buffer.getShape();
@@ -18,14 +21,13 @@ class ImageConversion {
     int w = shape[shape.length - 2];
     if (image.width != w || image.height != h) {
       throw ArgumentError(
-        "Given bitmap has different width or height ${[
+        "Given image has different width or height ${[
           image.width,
           image.height
         ]} with the expected ones ${[w, h]}.",
       );
     }
 
-    List<int> bytes = List(w * h * 3);
     List<int> rgbValues = buffer.getIntList();
 
     assert(rgbValues.length == w * h * 3);
