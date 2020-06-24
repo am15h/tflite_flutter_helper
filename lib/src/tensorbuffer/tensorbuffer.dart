@@ -27,19 +27,19 @@ abstract class TensorBuffer {
   /// Creates a [TensorBuffer] with specified [shape] and [TfLiteType]. Here are some
   /// examples:
   ///
-  /// ```
+  /// ```dart
   /// Creating a float TensorBuffer with shape [2, 3]:
   /// List<int> shape = [2, 3];
   /// TensorBuffer tensorBuffer = TensorBuffer.createFixedSize(shape, TfLiteType.float32);
   /// ```
   ///
-  /// ```
+  /// ```dart
   /// Creating an uint8 TensorBuffer of a scalar:
   /// List<int> shape = [2, 3];
   /// TensorBuffer tensorBuffer = TensorBuffer.createFixedSize(shape, TfLiteType.uint8);
   /// ```
   ///
-  /// ```
+  /// ```dart
   /// Creating an empty uint8 TensorBuffer:
   /// List<int> shape = [0];
   /// TensorBuffer tensorBuffer = TensorBuffer.createFixedSize(shape, TfLiteType.uint8);

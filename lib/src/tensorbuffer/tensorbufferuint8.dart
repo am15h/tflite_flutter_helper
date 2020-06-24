@@ -28,7 +28,7 @@ class TensorBufferUint8 extends TensorBuffer {
 
   @override
   double getDoubleValue(int absIndex) {
-    return byteData.getFloat32(absIndex);
+    return byteData.getFloat32(absIndex, Endian.little);
   }
 
   @override
@@ -62,13 +62,15 @@ class TensorBufferUint8 extends TensorBuffer {
 
     if (src is List<double>) {
       for (int i = 0; i < src.length; i++) {
-        // TODO: Implementation required
-        throw ArgumentError('List<double> not supported yet');
+        byteData.setUint8(i, (max(min(src[i], 255.0), 0.0).floor() & 0xFF));
       }
     } else if (src is List<int>) {
       for (int i = 0; i < src.length; i++) {
         byteData.setUint8(i, max(min(src[i], 255), 0));
       }
+    } else {
+      throw ArgumentError(
+          'Only List<double> and List<int> are supported but src is: ${src.runtimeType}');
     }
   }
 }
