@@ -61,6 +61,8 @@ abstract class TensorBuffer {
     }
   }
 
+  final Endian endian = Endian.little;
+
   /// Creates an empty dynamic [TensorBuffer] with specified [TfLiteType]. The shape of the
   /// created [TensorBuffer] is {0}.
   ///

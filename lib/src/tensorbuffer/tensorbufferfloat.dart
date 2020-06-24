@@ -26,7 +26,7 @@ class TensorBufferFloat extends TensorBuffer {
   List<double> getDoubleList() {
     List<double> arr = List(flatSize);
     for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getFloat32(i * 4, Endian.little);
+      arr[i] = byteData.getFloat32(i * 4, endian);
     }
     return arr;
   }
@@ -40,7 +40,7 @@ class TensorBufferFloat extends TensorBuffer {
   List<int> getIntList() {
     List<int> arr = List(flatSize);
     for (int i = 0; i < flatSize; i++) {
-      arr[i] = byteData.getFloat32(i * 4, Endian.little).floor();
+      arr[i] = byteData.getFloat32(i * 4, endian).floor();
     }
     return arr;
   }
@@ -68,11 +68,11 @@ class TensorBufferFloat extends TensorBuffer {
 
     if (src is List<double>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setFloat32(i * 4, src[i], Endian.little);
+        byteData.setFloat32(i * 4, src[i], endian);
       }
     } else if (src is List<int>) {
       for (int i = 0; i < src.length; i++) {
-        byteData.setFloat32(i * 4, src[i].toDouble(), Endian.little);
+        byteData.setFloat32(i * 4, src[i].toDouble(), endian);
       }
     } else {
       throw ArgumentError(

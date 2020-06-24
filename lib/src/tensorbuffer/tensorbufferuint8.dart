@@ -28,7 +28,7 @@ class TensorBufferUint8 extends TensorBuffer {
 
   @override
   double getDoubleValue(int absIndex) {
-    return byteData.getFloat32(absIndex, Endian.little);
+    return byteData.getFloat32(absIndex, endian);
   }
 
   @override
