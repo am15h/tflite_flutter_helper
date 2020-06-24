@@ -2,8 +2,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' as f;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imageclassification/Classifier.dart';
+import 'package:imageclassification/classifier.dart';
+import 'package:imageclassification/classifier_quant.dart';
+import 'package:logger/logger.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+
+import 'classifier_float.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,6 +36,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Classifier _classifier;
 
+  var logger = Logger();
+
   File _image;
   final picker = ImagePicker();
 
@@ -55,15 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _classifier = Classifier();
+    _classifier = ClassifierQuant();
   }
 
   void _predict() {
     int st = DateTime.now().millisecondsSinceEpoch;
     final pred = _classifier.predict(_image);
-    int en = DateTime.now().millisecondsSinceEpoch;
-    print('Time: ${en - st}');
     pred.then((category) {
+      int en = DateTime.now().millisecondsSinceEpoch;
+      logger.d('Total Time: ${en - st}');
       setState(() {
         this.category = category;
       });
