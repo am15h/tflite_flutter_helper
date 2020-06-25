@@ -11,10 +11,30 @@ import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 import 'image_operator.dart';
 import 'ops/rot90_op.dart';
 
+/// ImageProcessor is a helper class for preprocessing and postprocessing [TensorImage].
+///
+/// It could transform a [TensorImage] to another by executing a chain of [ImageOperator].
+///
+/// Example Usage:
+///
+/// ```dart
+///   ImageProcessor processor = ImageProcessorBuilder()
+///       .add(ResizeOp(224, 224, ResizeMethod.NEAREST_NEIGHBOR)
+///       .add(Rot90Op())
+///       .add(NormalizeOp(127.5, 127.5))
+///       .build();
+///   TensorImage anotherTensorImage = processor.process(tensorImage);
+/// ```
+///
+/// See [ImageProcessorBuilder] to build a [ImageProcessor] instance
+///
+/// See [SequentialProcessor.process] to apply the processor on a [TensorImage]
 class ImageProcessor extends SequentialProcessor<TensorImage> {
   ImageProcessor._(SequentialProcessorBuilder<TensorImage> builder)
       : super(builder);
 
+  /// Transforms a [point] from coordinates system of the result image back to the one of the input
+  /// image.
   Point inverseTransform(
       Point point, int inputImageHeight, int inputImageWidth) {
     List<int> widths = [];
@@ -48,6 +68,8 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
     return point;
   }
 
+  /// Transforms a [rect] from coordinates system of the result image back to the one of the input
+  /// image.
   Rect inverseTransformRect(
       Rect rect, int inputImageHeight, int inputImageWidth) {
     // when rotation is involved, corner order may change - top left changes to bottom right, .etc
@@ -75,9 +97,17 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
   }
 }
 
+/// The Builder to create an [ImageProcessor], which could be executed later.
+///
+/// See [add] to add a [TensorOperator] or [ImageOperator]
+/// See [build] complete the building process and get a built Processor
 class ImageProcessorBuilder extends SequentialProcessorBuilder<TensorImage> {
   ImageProcessorBuilder() : super();
 
+  /// Adds an [ImageOperator] or a [TensorOperator] into the Operator chain.
+  ///
+  /// Throws [UnsupportedError] if [op] is neither an [ImageOperator] nor a
+  /// [TensorOperator]
   ImageProcessorBuilder add(Operator op) {
     if (op is ImageOperator) {
       super.add(op);
@@ -90,6 +120,7 @@ class ImageProcessorBuilder extends SequentialProcessorBuilder<TensorImage> {
     }
   }
 
+  /// Completes the building process and gets the {@link ImageProcessor} instance.
   ImageProcessor build() {
     return ImageProcessor._(this);
   }

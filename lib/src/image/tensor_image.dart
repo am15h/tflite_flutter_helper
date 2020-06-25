@@ -7,18 +7,44 @@ import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
 import 'package:tflite_flutter_helper/src/image/image_conversions.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
+/// [TensorImage] is the wrapper class for [Image] object. When using image processing utils in
+/// Flutter Helper library, it's common to convert image objects in variant types to TensorImage at
+/// first.
+///
+/// IMPORTANT: [Image] always refers to [Image] from 'package:image/image.dart' and not those from
+/// 'dart:ui' or 'package:flutter/widgets.dart.
+///
+/// At present, only RGB images are supported, and the A channel is always ignored.
+///
+/// Details of data storage: a [TensorImage] object may have 2 potential sources of truth: a
+/// [Image] or a [TensorBuffer]. [TensorImage] maintains the state and only
+/// convert one to the other when needed.
+///
+/// IMPORTANT: The container doesn't own its data. Callers should not modify data objects those
+/// are passed to [_ImageContainer.bufferImage] or [_ImageContainer.tensorBuffer].
+///
+/// See [ImageProcessor] which is often used for transforming a [TensorImage].
 class TensorImage {
   _ImageContainer _container;
 
+  /// Initialize a [TensorImage] object.
+  ///
+  /// Note: For Image with float value pixels use [TensorImage(TfLiteType.float)]
   TensorImage([TfLiteType dataType = TfLiteType.uint8])
       : _container = _ImageContainer(dataType);
 
+  /// Initialize [TensorImage] from [Image]
+  ///
+  /// Important Note: [Image] is imported from import 'package:image/image.dart'
   static TensorImage fromImage(Image image) {
     TensorImage tensorImage = TensorImage();
     tensorImage.loadImage(image);
     return tensorImage;
   }
 
+  /// Initialize [TensorImage] from [File]
+  ///
+  /// Load image as a [File] and create [TensorImage].
   static TensorImage fromFile(File imageFile) {
     Image image = decodeImage(imageFile.readAsBytesSync());
     TensorImage tensorImage = TensorImage();
@@ -26,18 +52,25 @@ class TensorImage {
     return tensorImage;
   }
 
+  /// Initialize [TensorImage] from [TensorBuffer]
   static TensorImage fromTensorBuffer(TensorBuffer buffer) {
     TensorImage tensorImage = TensorImage();
     tensorImage.loadTensorBuffer(buffer);
     return tensorImage;
   }
 
+  /// Load [Image] to this [TensorImage]
   void loadImage(Image image) {
     SupportPreconditions.checkNotNull(image,
         message: "Cannot load null image.");
     _container.image = image;
   }
 
+  /// Load a list of RGB pixels into this [TensorImage]
+  ///
+  /// Throws [ArgumentError] if [pixels] is not List<double> or List<int>,
+  /// and [shape] is not in form (height, width ,channels) or
+  /// (1, height, width, channels)
   void loadRgbPixels(List pixels, List<int> shape) {
     checkImageTensorShape(shape);
     TensorBuffer buffer = TensorBuffer.createDynamic(dataType);
@@ -45,11 +78,16 @@ class TensorImage {
     loadTensorBuffer(buffer);
   }
 
+  /// Loads a [TensorBuffer] containing pixel values. The color layout should be RGB.
+  ///
+  /// Throws [ArgumentError] if [TensorBuffer.shape] is not in form (height, width ,channels) or
+  /// (1, height, width, channels)
   void loadTensorBuffer(TensorBuffer buffer) {
     checkImageTensorShape(buffer.getShape());
     _container.bufferImage = buffer;
   }
 
+  /// Requires tensor shape [h, w, 3] or [1, h, w, 3].
   static void checkImageTensorShape(List<int> shape) {
     SupportPreconditions.checkArgument(
         (shape.length == 3 || (shape.length == 4 && shape[0] == 1)) &&
@@ -61,18 +99,91 @@ class TensorImage {
                 " in order.");
   }
 
+  /// Gets the image width.
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
+  /// and [ArgumentError] if the container data is corrupted.
   int get width => _container.width;
+
+  /// Gets the image height.
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
+  /// and [ArgumentError] if the container data is corrupted.
   int get height => _container.height;
+
+  /// Gets the image height.
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
+  /// and [ArgumentError] if the container data is corrupted.
+  int getHeight() => height;
+
+  /// Gets the image width.
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
+  /// and [ArgumentError] if the container data is corrupted.
+  int getWidth() => width;
+
+  /// Gets the current data type.
+  ///
+  /// Currently only UINT8 and FLOAT32 are possible.
   TfLiteType get dataType => _container.tfLiteType;
 
+  /// Gets the current data type.
+  ///
+  /// Currently only UINT8 and FLOAT32 are possible.
+  TfLiteType getDataType() => dataType;
+
+  /// Gets the current data type.
+  ///
+  /// Currently only UINT8 and FLOAT32 are possible.
+  TfLiteType get tfLiteType => _container.tfLiteType;
+
+  /// Returns the underlying [Image] representation of this [TensorImage].
+  ///
+  /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
+  /// concern, but if modification is necessary, please make a copy.
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
   Image get image => _container.image;
+
+  /// Returns a [ByteBuffer] representation of this [TensorImage].
+  ///
+  /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
+  /// concern, but if modification is necessary, please make a copy.
+  ///
+  /// It's essentially a short cut for [getTensorBuffer.getBuffer()].
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
   ByteBuffer get buffer => _container.tensorBuffer.getBuffer();
 
+  /// Returns a [ByteBuffer] representation of this [TensorImage].
+  ///
+  /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
+  /// concern, but if modification is necessary, please make a copy.
+  ///
+  /// It's essentially a short cut for [getTensorBuffer.getBuffer()].
+  ///
+  /// Throws [StateError] if the TensorImage never loads data.
+  ByteBuffer getBuffer() => buffer;
+
+  /// Returns the underlying [TensorBuffer] representation for this [TensorImage]
+  ///
+  /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
+  /// concern, but if modification is necessary, please make a copy.
+  ///
+  /// Throws [ArgumentError] if this TensorImage never loads data.
   TensorBuffer get tensorBuffer => _container.tensorBuffer;
 
-  TfLiteType get tfLiteType => _container.tfLiteType;
+  /// Returns the underlying [TensorBuffer] representation for this [TensorImage]
+  ///
+  /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
+  /// concern, but if modification is necessary, please make a copy.
+  ///
+  /// Throws [ArgumentError] if this TensorImage never loads data.
+  TensorBuffer getTensorBuffer() => tensorBuffer;
 }
 
+// Handles RGB image data storage strategy of TensorBuffer.
 class _ImageContainer {
   TensorBuffer _bufferImage;
   bool _isBufferUpdated;
@@ -81,7 +192,7 @@ class _ImageContainer {
   bool _isImageUpdated;
   final TfLiteType tfLiteType;
 
-  static final int argbElementBytes = 3;
+  static final int argbElementBytes = 4;
 
   _ImageContainer(this.tfLiteType);
 
@@ -107,6 +218,7 @@ class _ImageContainer {
     return _image;
   }
 
+  // Internal method to set the image source-of-truth with a image.
   set image(Image value) {
     _image = value;
     _isBufferUpdated = false;
@@ -134,6 +246,7 @@ class _ImageContainer {
     return _bufferImage;
   }
 
+  // Internal method to set the image source-of-truth with a TensorBuffer.
   set bufferImage(TensorBuffer value) {
     _bufferImage = value;
     _isImageUpdated = false;
