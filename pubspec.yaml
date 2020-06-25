@@ -1,11 +1,11 @@
 name: tflite_flutter_helper
-description: TFLite Flutter Helper Library
-version: 0.0.1
-author:
+description: Easy processing and manipulating input and output of TensorFlow Lite Models.
+version: 0.1.0
+author: Amish Garg
 homepage:
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:

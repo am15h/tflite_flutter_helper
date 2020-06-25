@@ -109,6 +109,9 @@ abstract class TensorBuffer {
   /// Returns the data buffer.
   ByteBuffer getBuffer() => byteData.buffer;
 
+  /// Returns the data buffer.
+  ByteBuffer get buffer => byteData.buffer;
+
   /// Gets the [TensorBuffer.flatSize] of the buffer.
   int getFlatSize() => flatSize;
 

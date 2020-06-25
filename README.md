@@ -115,7 +115,7 @@ ImageProcessor imageProcessor = ImageProcessorBuilder()
 
 ```
 
-See more details (here)[https://www.tensorflow.org/lite/convert/metadata#normalization_and_quantization_parameters] about normalization and quantization.
+See more details [here](https://www.tensorflow.org/lite/convert/metadata#normalization_and_quantization_parameters) about normalization and quantization.
 
 ### Quantization
 
