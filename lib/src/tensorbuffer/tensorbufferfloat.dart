@@ -33,7 +33,7 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   double getDoubleValue(int absIndex) {
-    return getDoubleList().elementAt(absIndex);
+    return byteData.getFloat32(absIndex * 4, endian);
   }
 
   @override
@@ -47,7 +47,7 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   int getIntValue(int absIndex) {
-    return getIntList().elementAt(absIndex);
+    return byteData.getFloat32(absIndex * 4, endian).floor();
   }
 
   @override

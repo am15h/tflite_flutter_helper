@@ -50,7 +50,6 @@ class ImageConversion {
   static void convertImageToTensorBuffer(Image image, TensorBuffer buffer) {
     int w = image.width;
     int h = image.height;
-
     List<int> intValues = image.data;
 
     List<int> shape = [h, w, 3];
