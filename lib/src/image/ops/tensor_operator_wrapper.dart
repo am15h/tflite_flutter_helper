@@ -24,7 +24,11 @@ class TensorOperatorWrapper implements ImageOperator {
   TensorImage apply(TensorImage image) {
     SupportPreconditions.checkNotNull(image,
         message: "Op cannot apply on null image.");
-    image.loadTensorBuffer(_tensorOp.apply(image.tensorBuffer));
+
+    TensorBuffer initial = image.tensorBuffer;
+    TensorBuffer processed = _tensorOp.apply(initial);
+    image.loadTensorBuffer(processed);
+
     return image;
   }
 

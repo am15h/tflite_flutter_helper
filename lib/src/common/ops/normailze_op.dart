@@ -117,10 +117,11 @@ class NormalizeOp implements TensorOperator {
         errorMessage:
             "Number of means (stddevs) is not same with number of channels (size of last axis).");
 
-    List<double> values = input.getDoubleList();
+    int flatSize = input.getFlatSize();
+    List<double> values = List(flatSize);
     int j = 0;
-    for (int i = 0; i < values.length; i++) {
-      values[i] = (values[i] - mean[j]) / stddev[j];
+    for (int i = 0; i < flatSize; i++) {
+      values[i] = (input.getDoubleValue(i) - mean[j]) / stddev[j];
       j = (j + 1) % numChannels;
     }
     TensorBuffer output;
