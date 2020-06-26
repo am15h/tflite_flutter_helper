@@ -19,7 +19,7 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 
 const int h = 100;
 const int w = 150;
-const String imageFileName = 'test_assets/greyfox.jpg';
+const String imageFileName = 'test_assets/lion.jpg';
 // flutter test test
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -116,7 +116,7 @@ void main() {
 
   group('common', () {
     test('file_util labels from file', () async {
-      File file = File('test_assets/labels_mobilenet_quant_v1_224.txt');
+      File file = File('test_assets/labels.txt');
       List<String> labels = FileUtil.loadLabelsFromFile(file);
       expect(labels[0], 'background');
     });
@@ -188,6 +188,7 @@ void main() {
 
       test('fromTensorBuffer', () {
         var tensorImage = TensorImage.fromTensorBuffer(tensorbuffer);
+
         expect(tensorImage.width, inputWidth);
         expect(tensorImage.height, inputHeight);
       });
@@ -279,3 +280,6 @@ void main() {
     });
   });
 }
+
+// Visually verify using
+// File('test_assets/output.jpg').writeAsBytes(JpegEncoder().encodeImage(tensorImage.image));
