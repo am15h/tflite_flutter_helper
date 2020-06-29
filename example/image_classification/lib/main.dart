@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' as f;
+import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imageclassification/classifier.dart';
@@ -7,15 +7,13 @@ import 'package:imageclassification/classifier_quant.dart';
 import 'package:logger/logger.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
-import 'classifier_float.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Image Classification',
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
@@ -43,7 +41,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Image _imageWidget;
 
+  img.Image fox;
+
   Category category;
+
+  @override
+  void initState() {
+    super.initState();
+    _classifier = ClassifierQuant();
+  }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -58,21 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _classifier = ClassifierQuant();
-  }
+  void _predict() async {
+    img.Image imageInput = img.decodeImage(_image.readAsBytesSync());
+    var pred = _classifier.predict(imageInput);
 
-  void _predict() {
-    int st = DateTime.now().millisecondsSinceEpoch;
-    final pred = _classifier.predict(_image);
-    pred.then((category) {
-      int en = DateTime.now().millisecondsSinceEpoch;
-      logger.d('Total Time: ${en - st}');
-      setState(() {
-        this.category = category;
-      });
+    setState(() {
+      this.category = pred;
     });
   }
 
