@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
