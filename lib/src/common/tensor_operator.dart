@@ -1,5 +1,4 @@
 import 'package:tflite_flutter_helper/src/common/operator.dart';
-import 'package:tflite_flutter_helper/src/common/sequential_processor.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
 /// Applies some operation on TensorBuffers.

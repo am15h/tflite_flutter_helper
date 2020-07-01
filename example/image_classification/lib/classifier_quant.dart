@@ -1,5 +1,5 @@
 import 'package:imageclassification/classifier.dart';
-import 'package:tflite_flutter_helper/src/common/ops/normailze_op.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 class ClassifierQuant extends Classifier {
   ClassifierQuant({int numThreads: 1}) : super(numThreads: numThreads);
