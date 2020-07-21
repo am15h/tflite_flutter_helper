@@ -127,11 +127,11 @@ class BoundingBoxUtils {
 
     switch (type) {
       case BoundingBoxType.BOUNDARIES:
-        return _convertFromBoundaries(values, coordinateType, height, width);
+        return _convertFromBoundaries(orderedValues, coordinateType, height, width);
       case BoundingBoxType.UPPER_LEFT:
-        return _convertFromUpperLeft(values, coordinateType, height, width);
+        return _convertFromUpperLeft(orderedValues, coordinateType, height, width);
       case BoundingBoxType.CENTER:
-        return _convertFromCenter(values, coordinateType, height, width);
+        return _convertFromCenter(orderedValues, coordinateType, height, width);
     }
 
     throw ArgumentError('Cannot recognize BoundingBox.Type $type');
