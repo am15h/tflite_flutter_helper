@@ -44,17 +44,18 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
-    if (_targetWidth - 1 > w) {
+    if (_targetWidth > w) {
       // padding
       srcL = 0;
       srcR = w;
-      dstL = (_targetWidth - 1 - w) ~/ 2;
+      dstL = (_targetWidth - w) ~/ 2;
       dstR = dstL + w;
     } else {
       // cropping
       dstL = 0;
       dstR = _targetWidth;
-      // custom crop position. First item of the tuple represent the desired width postion
+      // custom crop position. First item of the tuple represent the desired position for left position
+      // and the second item the right position
       Tuple2<int, int> cropPos =
           _computeCropPosition(_targetWidth, w, _cropPosition.item1);
       srcL = cropPos.item1;
@@ -70,7 +71,8 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // cropping
       dstT = 0;
       dstB = _targetHeight;
-      // custom crop position. Second item of the tuple represent the desired height postion
+      // custom crop position. First item of the tuple represent the desired position for top position
+      // and the second item the bottom position
       Tuple2<int, int> cropPos =
           _computeCropPosition(_targetHeight, w, _cropPosition.item2);
       srcT = cropPos.item1;
