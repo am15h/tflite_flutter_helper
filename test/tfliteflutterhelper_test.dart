@@ -250,6 +250,33 @@ void main() {
         }
       });
 
+      test('resize with custom crop position with padding', () {
+        // should not fail but crop position have no influence as padding mean centered image
+        int h = 3000;
+        int w = 4000;
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(ResizeWithCropOrPadOp(h, w, Tuple2<int, int>(0, 0)))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        TensorImage processedImage = imageProcessor.process(sourceImage);
+
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
+      });
+
+      test('resize with custom crop position outside image', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(ResizeWithCropOrPadOp(h, w, Tuple2<int, int>(1000, 1000)))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        TensorImage processedImage = imageProcessor.process(sourceImage);
+
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
+      });
+
       test('resize with pad', () {
         int h = 3000;
         int w = 4000;

@@ -44,6 +44,8 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
+    // TODO: Return an error if the crop position is out of the image
+
     if (_targetWidth > w) {
       // padding
       srcL = 0;
