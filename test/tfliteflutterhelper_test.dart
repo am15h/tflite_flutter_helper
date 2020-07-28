@@ -16,6 +16,7 @@ import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
+import 'package:tuple/tuple.dart';
 
 const int h = 100;
 const int w = 150;
@@ -228,6 +229,25 @@ void main() {
 
         expect(processedImage.height, h);
         expect(processedImage.width, w);
+      });
+
+      test('resize with custom crop position', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(ResizeWithCropOrPadOp(h, w, Tuple2<int, int>(0, 0)))
+            .build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
+        // check that the crop position is taken in account
+        // ie:(checking pixel value of the original image vs pixel in crop)
+        for (var i = 0; i < w; i++) {
+          for (var j = 0; j < h; j++) {
+            expect(image.getPixel(i, j), processedImage.image.getPixel(i, j));
+          }
+        }
       });
 
       test('resize with pad', () {

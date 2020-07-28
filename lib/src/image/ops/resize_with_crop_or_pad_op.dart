@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
+import 'package:tuple/tuple.dart';
 
 /// As a computation unit for processing images, it could resize image to predefined size.
 ///
@@ -15,11 +16,14 @@ import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 class ResizeWithCropOrPadOp implements ImageOperator {
   final int _targetHeight;
   final int _targetWidth;
+  final Tuple2<int, int> _cropPosition;
   final Image _output;
 
   /// Creates a ResizeWithCropOrPadOp which could crop/pad images to height: [_targetHeight] &
   /// width: [_targetWidth]. It adopts center-crop and zero-padding.
-  ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth)
+  /// You can pass whith [_cropPosition] a tuple2 representing a top-left position (width, height) of a crop to overide the default centered one.
+  ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth,
+      [this._cropPosition = const Tuple2<int, int>(null, null)])
       : _output = Image(_targetWidth, _targetHeight);
 
   /// Applies the defined resizing with cropping or/and padding on [image] and returns the
@@ -40,18 +44,21 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
-    if (_targetWidth > w) {
+    if (_targetWidth - 1 > w) {
       // padding
       srcL = 0;
       srcR = w;
-      dstL = (_targetWidth - w) ~/ 2;
+      dstL = (_targetWidth - 1 - w) ~/ 2;
       dstR = dstL + w;
     } else {
       // cropping
       dstL = 0;
       dstR = _targetWidth;
-      srcL = (w - _targetWidth) ~/ 2;
-      srcR = srcL + _targetWidth;
+      // custom crop position. First item of the tuple represent the desired width postion
+      Tuple2<int, int> cropPos =
+          _computeCropPosition(_targetWidth, w, _cropPosition.item1);
+      srcL = cropPos.item1;
+      srcR = cropPos.item2;
     }
     if (_targetHeight > h) {
       // padding
@@ -63,8 +70,11 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // cropping
       dstT = 0;
       dstB = _targetHeight;
-      srcT = (h - _targetHeight) ~/ 2;
-      srcB = srcT + _targetHeight;
+      // custom crop position. Second item of the tuple represent the desired height postion
+      Tuple2<int, int> cropPos =
+          _computeCropPosition(_targetHeight, w, _cropPosition.item2);
+      srcT = cropPos.item1;
+      srcB = cropPos.item2;
     }
 
     Image resized = _drawImage(_output, image.image,
@@ -80,6 +90,21 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     image.loadImage(resized);
 
     return image;
+  }
+
+  Tuple2<int, int> _computeCropPosition(int targetSize, int imageSize,
+      [int cropPosition]) {
+    int srcLT;
+    int srcRB;
+
+    if (cropPosition != null) {
+      srcLT = cropPosition; // custom crop
+    } else {
+      srcLT = (imageSize - targetSize) ~/ 2; // centered crop
+    }
+    srcRB = srcLT + targetSize;
+
+    return Tuple2<int, int>(srcLT, srcRB);
   }
 
   @override
