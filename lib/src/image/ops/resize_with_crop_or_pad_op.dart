@@ -44,7 +44,11 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
-    // TODO: Return an error if the crop position is out of the image
+    int cropWidthCustomPosition = _cropPosition.item1;
+    int cropHeightCustomPosition = _cropPosition.item2;
+
+    _checkCropPositionArgument(
+        cropWidthCustomPosition, cropHeightCustomPosition, w, h);
 
     if (_targetWidth > w) {
       // padding
@@ -59,7 +63,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // custom crop position. First item of the tuple represent the desired position for left position
       // and the second item the right position
       Tuple2<int, int> cropPos =
-          _computeCropPosition(_targetWidth, w, _cropPosition.item1);
+          _computeCropPosition(_targetWidth, w, cropWidthCustomPosition);
       srcL = cropPos.item1;
       srcR = cropPos.item2;
     }
@@ -76,7 +80,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // custom crop position. First item of the tuple represent the desired position for top position
       // and the second item the bottom position
       Tuple2<int, int> cropPos =
-          _computeCropPosition(_targetHeight, w, _cropPosition.item2);
+          _computeCropPosition(_targetHeight, w, cropHeightCustomPosition);
       srcT = cropPos.item1;
       srcB = cropPos.item2;
     }
@@ -109,6 +113,22 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     srcRB = srcLT + targetSize;
 
     return Tuple2<int, int>(srcLT, srcRB);
+  }
+
+  // This function is used to check the crop custom crop position is valid
+  void _checkCropPositionArgument(
+      int cropWidthCustomPosition, int cropHeightCustomPosition, int w, int h) {
+    // Check crop position inpute if provided
+    if (cropWidthCustomPosition != null && cropHeightCustomPosition != null) {
+      // Return an error if the crop position is outside of the image
+      if ((cropWidthCustomPosition + _targetWidth > w) ||
+          (cropHeightCustomPosition + _targetHeight > h)) {
+        int leftWidth = cropWidthCustomPosition + _targetWidth;
+        int bottomHeight = cropHeightCustomPosition + _targetHeight;
+        throw ArgumentError(
+            "The crop position is outside the image : crop(x:x+cropWidth,y+cropHeight) = ($cropWidthCustomPosition:$leftWidth, $cropHeightCustomPosition:$bottomHeight) not in imageSize(x,y) = ($w, $h)");
+      }
+    }
   }
 
   @override
