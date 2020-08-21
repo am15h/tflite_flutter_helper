@@ -16,14 +16,15 @@ import 'package:tuple/tuple.dart';
 class ResizeWithCropOrPadOp implements ImageOperator {
   final int _targetHeight;
   final int _targetWidth;
-  final Tuple2<int, int> _cropPosition;
+  final int _cropLeft;
+  final int _cropTop;
   final Image _output;
 
   /// Creates a ResizeWithCropOrPadOp which could crop/pad images to height: [_targetHeight] &
   /// width: [_targetWidth]. It adopts center-crop and zero-padding.
-  /// You can pass whith [_cropPosition] a tuple2 representing a top-left position (width, height) of a crop to overide the default centered one.
+  /// You can pass whith [_cropLeft] and [_cropTop] top-left position of a crop to overide the default centered one.
   ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth,
-      [this._cropPosition = const Tuple2<int, int>(null, null)])
+      [this._cropLeft, this._cropTop])
       : _output = Image(_targetWidth, _targetHeight);
 
   /// Applies the defined resizing with cropping or/and padding on [image] and returns the
@@ -44,11 +45,10 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
-    int cropWidthCustomPosition = _cropPosition.item1;
-    int cropHeightCustomPosition = _cropPosition.item2;
+    int cropWidthCustomPosition = _cropLeft;
+    int cropHeightCustomPosition = _cropTop;
 
-    _checkCropPositionArgument(
-        cropWidthCustomPosition, cropHeightCustomPosition, w, h);
+    _checkCropPositionArgument(w, h);
 
     if (_targetWidth > w) {
       // padding
@@ -116,17 +116,21 @@ class ResizeWithCropOrPadOp implements ImageOperator {
   }
 
   // This function is used to check the crop custom crop position is valid
-  void _checkCropPositionArgument(
-      int cropWidthCustomPosition, int cropHeightCustomPosition, int w, int h) {
-    // Check crop position inpute if provided
-    if (cropWidthCustomPosition != null && cropHeightCustomPosition != null) {
+  void _checkCropPositionArgument(int w, int h) {
+    // Ensure both are null or non-null at the same time else throw argument error.
+    if (_cropLeft != _cropTop) {
+      throw ArgumentError(
+          "Crop position argument (_cropLeft, _cropTop) is invalid, got: ($_cropLeft, $_cropTop)");
+    }
+
+    // Check crop position input if both provided
+    if (_cropLeft != null && _cropTop != null) {
       // Return an error if the crop position is outside of the image
-      if ((cropWidthCustomPosition + _targetWidth > w) ||
-          (cropHeightCustomPosition + _targetHeight > h)) {
-        int leftWidth = cropWidthCustomPosition + _targetWidth;
-        int bottomHeight = cropHeightCustomPosition + _targetHeight;
+      if ((_cropLeft + _targetWidth > w) || (_cropTop + _targetHeight > h)) {
+        int leftWidth = _cropLeft + _targetWidth;
+        int bottomHeight = _cropTop + _targetHeight;
         throw ArgumentError(
-            "The crop position is outside the image : crop(x:x+cropWidth,y+cropHeight) = ($cropWidthCustomPosition:$leftWidth, $cropHeightCustomPosition:$bottomHeight) not in imageSize(x,y) = ($w, $h)");
+            "The crop position is outside the image : crop(x:x+cropWidth,y+cropHeight) = ($_cropLeft:$leftWidth, $_cropTop:$bottomHeight) not in imageSize(x,y) = ($w, $h)");
       }
     }
   }

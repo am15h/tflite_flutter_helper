@@ -16,7 +16,6 @@ import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
 import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
-import 'package:tuple/tuple.dart';
 
 const int h = 100;
 const int w = 150;
@@ -233,7 +232,7 @@ void main() {
 
       test('resize with custom crop position', () {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
-            .add(ResizeWithCropOrPadOp(h, w, Tuple2<int, int>(0, 0)))
+            .add(ResizeWithCropOrPadOp(h, w, 0, 0))
             .build();
 
         TensorImage processedImage =
@@ -253,8 +252,18 @@ void main() {
       test('resize with custom crop position outside image', () {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
             // the be sure we are outside we took the input size of the image and add 1 pixel
-            .add(ResizeWithCropOrPadOp(
-                h, w, Tuple2<int, int>(inputWidth + 1, inputHeight + 1)))
+            .add(ResizeWithCropOrPadOp(h, w, inputWidth + 1, inputHeight + 1))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        expect(() => imageProcessor.process(sourceImage),
+            throwsA(isA<ArgumentError>()));
+      });
+
+      test('resize with custom crop and one null argument', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            // the be sure we are outside we took the input size of the image and add 1 pixel
+            .add(ResizeWithCropOrPadOp(h, w, 0, null))
             .build();
 
         TensorImage sourceImage = TensorImage.fromImage(image);
@@ -268,10 +277,7 @@ void main() {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
             // the be sure that a part of the crop is outside the iamge we took the input size and substract crop size / 2
             .add(ResizeWithCropOrPadOp(
-                h,
-                w,
-                Tuple2<int, int>(
-                    inputWidth - (w ~/ 2), inputHeight - (h ~/ 2))))
+                h, w, inputWidth - (w ~/ 2), inputHeight - (h ~/ 2)))
             .build();
 
         TensorImage sourceImage = TensorImage.fromImage(image);
@@ -282,7 +288,7 @@ void main() {
       test('resize with a negative a crop position', () {
         ImageProcessor imageProcessor = ImageProcessorBuilder()
             // the be sure that a part of the crop is outside the iamge we took the input size and substract crop size / 2
-            .add(ResizeWithCropOrPadOp(h, w, Tuple2<int, int>(-100, -10)))
+            .add(ResizeWithCropOrPadOp(h, w, -100, -10))
             .build();
 
         TensorImage sourceImage = TensorImage.fromImage(image);
