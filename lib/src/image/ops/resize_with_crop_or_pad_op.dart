@@ -118,7 +118,8 @@ class ResizeWithCropOrPadOp implements ImageOperator {
   // This function is used to check the crop custom crop position is valid
   void _checkCropPositionArgument(int w, int h) {
     // Ensure both are null or non-null at the same time else throw argument error.
-    if (_cropLeft != _cropTop) {
+    if ((_cropLeft == null && _cropTop != null) ||
+        (_cropLeft != null && _cropTop == null)) {
       throw ArgumentError(
           "Crop position argument (_cropLeft, _cropTop) is invalid, got: ($_cropLeft, $_cropTop)");
     }
