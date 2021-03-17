@@ -230,6 +230,72 @@ void main() {
         expect(processedImage.width, w);
       });
 
+      test('resize with custom crop position', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            .add(ResizeWithCropOrPadOp(h, w, 0, 0))
+            .build();
+
+        TensorImage processedImage =
+            imageProcessor.process(TensorImage.fromImage(image));
+
+        expect(processedImage.height, h);
+        expect(processedImage.width, w);
+        // check that the crop position is taken in account
+        // ie:(checking pixel value of the original image vs pixel in crop)
+        for (var i = 0; i < w; i++) {
+          for (var j = 0; j < h; j++) {
+            expect(image.getPixel(i, j), processedImage.image.getPixel(i, j));
+          }
+        }
+      });
+
+      test('resize with custom crop position outside image', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            // the be sure we are outside we took the input size of the image and add 1 pixel
+            .add(ResizeWithCropOrPadOp(h, w, inputWidth + 1, inputHeight + 1))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        expect(() => imageProcessor.process(sourceImage),
+            throwsA(isA<ArgumentError>()));
+      });
+
+      test('resize with custom crop and one null argument', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            // the be sure we are outside we took the input size of the image and add 1 pixel
+            .add(ResizeWithCropOrPadOp(h, w, 0, null))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        expect(() => imageProcessor.process(sourceImage),
+            throwsA(isA<ArgumentError>()));
+      });
+
+      test(
+          'resize with custom a crop position that make a part of it outside the image',
+          () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            // the be sure that a part of the crop is outside the iamge we took the input size and substract crop size / 2
+            .add(ResizeWithCropOrPadOp(
+                h, w, inputWidth - (w ~/ 2), inputHeight - (h ~/ 2)))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        expect(() => imageProcessor.process(sourceImage),
+            throwsA(isA<ArgumentError>()));
+      });
+
+      test('resize with a negative a crop position', () {
+        ImageProcessor imageProcessor = ImageProcessorBuilder()
+            // the be sure that a part of the crop is outside the iamge we took the input size and substract crop size / 2
+            .add(ResizeWithCropOrPadOp(h, w, -100, -10))
+            .build();
+
+        TensorImage sourceImage = TensorImage.fromImage(image);
+        expect(() => imageProcessor.process(sourceImage),
+            throwsA(isA<ArgumentError>()));
+      });
+
       test('resize with pad', () {
         int h = 3000;
         int w = 4000;

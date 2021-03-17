@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:tflite_flutter_helper/src/image/image_operator.dart';
 import 'package:tflite_flutter_helper/src/image/ops/resize_op.dart';
 import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
+import 'package:tuple/tuple.dart';
 
 /// As a computation unit for processing images, it could resize image to predefined size.
 ///
@@ -15,11 +16,15 @@ import 'package:tflite_flutter_helper/src/image/tensor_image.dart';
 class ResizeWithCropOrPadOp implements ImageOperator {
   final int _targetHeight;
   final int _targetWidth;
+  final int _cropLeft;
+  final int _cropTop;
   final Image _output;
 
   /// Creates a ResizeWithCropOrPadOp which could crop/pad images to height: [_targetHeight] &
   /// width: [_targetWidth]. It adopts center-crop and zero-padding.
-  ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth)
+  /// You can pass whith [_cropLeft] and [_cropTop] top-left position of a crop to overide the default centered one.
+  ResizeWithCropOrPadOp(this._targetHeight, this._targetWidth,
+      [this._cropLeft, this._cropTop])
       : _output = Image(_targetWidth, _targetHeight);
 
   /// Applies the defined resizing with cropping or/and padding on [image] and returns the
@@ -40,6 +45,11 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
+    int cropWidthCustomPosition = _cropLeft;
+    int cropHeightCustomPosition = _cropTop;
+
+    _checkCropPositionArgument(w, h);
+
     if (_targetWidth > w) {
       // padding
       srcL = 0;
@@ -50,8 +60,12 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // cropping
       dstL = 0;
       dstR = _targetWidth;
-      srcL = (w - _targetWidth) ~/ 2;
-      srcR = srcL + _targetWidth;
+      // custom crop position. First item of the tuple represent the desired position for left position
+      // and the second item the right position
+      Tuple2<int, int> cropPos =
+          _computeCropPosition(_targetWidth, w, cropWidthCustomPosition);
+      srcL = cropPos.item1;
+      srcR = cropPos.item2;
     }
     if (_targetHeight > h) {
       // padding
@@ -63,8 +77,12 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // cropping
       dstT = 0;
       dstB = _targetHeight;
-      srcT = (h - _targetHeight) ~/ 2;
-      srcB = srcT + _targetHeight;
+      // custom crop position. First item of the tuple represent the desired position for top position
+      // and the second item the bottom position
+      Tuple2<int, int> cropPos =
+          _computeCropPosition(_targetHeight, w, cropHeightCustomPosition);
+      srcT = cropPos.item1;
+      srcB = cropPos.item2;
     }
 
     Image resized = _drawImage(_output, image.image,
@@ -80,6 +98,42 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     image.loadImage(resized);
 
     return image;
+  }
+
+  Tuple2<int, int> _computeCropPosition(int targetSize, int imageSize,
+      [int cropPosition]) {
+    int srcLT;
+    int srcRB;
+
+    if (cropPosition != null) {
+      srcLT = cropPosition; // custom crop
+    } else {
+      srcLT = (imageSize - targetSize) ~/ 2; // centered crop
+    }
+    srcRB = srcLT + targetSize;
+
+    return Tuple2<int, int>(srcLT, srcRB);
+  }
+
+  // This function is used to check the crop custom crop position is valid
+  void _checkCropPositionArgument(int w, int h) {
+    // Ensure both are null or non-null at the same time else throw argument error.
+    if ((_cropLeft == null && _cropTop != null) ||
+        (_cropLeft != null && _cropTop == null)) {
+      throw ArgumentError(
+          "Crop position argument (_cropLeft, _cropTop) is invalid, got: ($_cropLeft, $_cropTop)");
+    }
+
+    // Check crop position input if both provided
+    if (_cropLeft != null && _cropTop != null) {
+      // Return an error if the crop position is outside of the image
+      if ((_cropLeft + _targetWidth > w) || (_cropTop + _targetHeight > h)) {
+        int leftWidth = _cropLeft + _targetWidth;
+        int bottomHeight = _cropTop + _targetHeight;
+        throw ArgumentError(
+            "The crop position is outside the image : crop(x:x+cropWidth,y+cropHeight) = ($_cropLeft:$leftWidth, $_cropTop:$bottomHeight) not in imageSize(x,y) = ($w, $h)");
+      }
+    }
   }
 
   @override
