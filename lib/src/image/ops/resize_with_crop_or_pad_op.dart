@@ -80,7 +80,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
       // custom crop position. First item of the tuple represent the desired position for top position
       // and the second item the bottom position
       Tuple2<int, int> cropPos =
-          _computeCropPosition(_targetHeight, w, cropHeightCustomPosition);
+          _computeCropPosition(_targetHeight, h, cropHeightCustomPosition);
       srcT = cropPos.item1;
       srcB = cropPos.item2;
     }
