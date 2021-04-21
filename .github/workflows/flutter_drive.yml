@@ -37,4 +37,4 @@ jobs:
           profile: ${{ matrix.device }}
           script: |
             cd ./example/image_classification && flutter pub get
-            cd ./example/image_classification && flutter driver --driver='test_driver/image_classification_e2e_test.dart' test/image_classification_e2e.dart
+            cd ./example/image_classification && flutter driver --driver=test_driver/integration_test.dart --target=integration_test/image_classification_test.dart
