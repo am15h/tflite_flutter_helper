@@ -185,12 +185,12 @@ class TensorImage {
 
 // Handles RGB image data storage strategy of TensorBuffer.
 class _ImageContainer {
-  late TensorBuffer? _bufferImage;
-  late Image? _image;
+  TensorBuffer? _bufferImage;
+  Image? _image;
 
   late bool _isBufferUpdated;
   late bool _isImageUpdated;
-  late final TfLiteType? tfLiteType;
+  final TfLiteType? tfLiteType;
 
   static final int? argbElementBytes = 4;
 
