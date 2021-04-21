@@ -27,7 +27,7 @@ void main() {
   group('tensorbuffer', () {
     group('uint8', () {
       test('static', () {
-        TensorBuffer tensorBuffer = TensorBufferUint8([1, 3, 2]);
+        late TensorBuffer tensorBuffer = TensorBufferUint8([1, 3, 2]);
         ByteBuffer buffer = Uint8List.fromList([1, 2, 3, 4, 5, 6]).buffer;
         tensorBuffer.loadBuffer(buffer);
         expect(tensorBuffer.getIntList(), [1, 2, 3, 4, 5, 6]);
@@ -35,7 +35,7 @@ void main() {
       });
 
       test('static', () {
-        TensorBuffer tensorBuffer =
+        late TensorBuffer tensorBuffer =
             TensorBuffer.createFixedSize([1, 3, 2], TfLiteType.uint8);
         ByteBuffer buffer = Uint8List.fromList([1, 2, 3, 4, 5, 6]).buffer;
         tensorBuffer.loadBuffer(buffer);
@@ -44,7 +44,7 @@ void main() {
       });
 
       test('dynamic', () {
-        TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
+        late TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
         ByteBuffer buffer = Uint8List.fromList([1, 2, 3, 4, 5, 6]).buffer;
         tensorBuffer.loadBuffer(buffer, shape: [1, 3, 2]);
         expect(tensorBuffer.getIntList(), [1, 2, 3, 4, 5, 6]);
@@ -52,14 +52,14 @@ void main() {
       });
 
       test('load list int', () {
-        TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
+        late TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
         List<int> list = [1, 2, 3, 4, 5, 655];
         tensorBuffer.loadList(list, shape: [1, 3, 2]);
         expect(tensorBuffer.getIntList(), [1, 2, 3, 4, 5, 255]);
       });
 
       test('load list float', () {
-        TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
+        late TensorBuffer tensorBuffer = TensorBufferUint8.dynamic();
         List<double> list = [1, 2, 883, -4, 5, 255.0];
         tensorBuffer.loadList(list, shape: [1, 3, 2]);
         expect(tensorBuffer.getIntList(), [1, 2, 255, 0, 5, 255]);
@@ -68,7 +68,7 @@ void main() {
 
     group('float', () {
       test('static', () {
-        TensorBuffer tensorBuffer = TensorBufferFloat([1, 2, 2]);
+        late TensorBuffer tensorBuffer = TensorBufferFloat([1, 2, 2]);
         var bdata = ByteData(16);
 
         for (int i = 0, j = 1; i < 16; i += 4, j++)
@@ -81,7 +81,7 @@ void main() {
       });
 
       test('static', () {
-        TensorBuffer tensorBuffer =
+        late TensorBuffer tensorBuffer =
             TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
         var bdata = ByteData(16);
 
@@ -95,7 +95,7 @@ void main() {
       });
 
       test('load list int', () {
-        TensorBuffer tensorBuffer =
+        late TensorBuffer tensorBuffer =
             TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
 
         tensorBuffer.loadList(<int>[1, 2, 3, 4], shape: [1, 2, 2]);
@@ -104,7 +104,7 @@ void main() {
       });
 
       test('load list float', () {
-        TensorBuffer tensorBuffer =
+        late TensorBuffer tensorBuffer =
             TensorBuffer.createFixedSize([1, 2, 2], TfLiteType.float32);
 
         tensorBuffer.loadList(<double>[1.0, 2.0, 3.0, 4.0], shape: [1, 2, 2]);
@@ -123,7 +123,7 @@ void main() {
 
     group('ops', () {
       test('normalize', () {
-        TensorBuffer tensorBuffer =
+        late TensorBuffer tensorBuffer =
             TensorBuffer.createFixedSize([3], TfLiteType.float32);
         tensorBuffer.loadList(<double>[0, 255, 127.5], shape: [3]);
 
@@ -139,13 +139,13 @@ void main() {
 
   group('image', () {
     File imageFile = File(imageFileName);
-    Image image = decodeImage(imageFile.readAsBytesSync());
+    Image image = decodeImage(imageFile.readAsBytesSync())!;
     final inputHeight = image.height;
     final inputWidth = image.width;
 
     group('TensorImage', () {
-      TensorImage tensorImage;
-      TensorBuffer tensorbuffer;
+      late TensorImage tensorImage;
+      late TensorBuffer tensorbuffer;
 
       test('fromFile', () {
         tensorImage = TensorImage.fromFile(imageFile);
@@ -158,7 +158,7 @@ void main() {
       });
 
       test('load pixels', () {
-        TensorImage tensorImage = TensorImage();
+        late TensorImage tensorImage = TensorImage();
 
         tensorImage.loadRgbPixels(
             image.getBytes(format: Format.rgb), [inputHeight, inputWidth, 3]);

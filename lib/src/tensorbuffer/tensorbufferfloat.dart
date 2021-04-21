@@ -21,7 +21,7 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   List<double> getDoubleList() {
-    List<double> arr = List(flatSize);
+    List<double> arr = List.filled(flatSize, 0);
     for (int i = 0; i < flatSize; i++) {
       arr[i] = byteData.getFloat32(i * 4, endian);
     }
@@ -35,7 +35,7 @@ class TensorBufferFloat extends TensorBuffer {
 
   @override
   List<int> getIntList() {
-    List<int> arr = List(flatSize);
+    List<int> arr = List.filled(flatSize, 0);
     for (int i = 0; i < flatSize; i++) {
       arr[i] = byteData.getFloat32(i * 4, endian).floor();
     }
@@ -54,7 +54,7 @@ class TensorBufferFloat extends TensorBuffer {
   }
 
   @override
-  void loadList(List src, {List<int> shape}) {
+  void loadList(List src, {required List<int> shape}) {
     SupportPreconditions.checkNotNull(src,
         message: "The array to be loaded cannot be null.");
     SupportPreconditions.checkArgument(

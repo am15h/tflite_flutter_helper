@@ -5,10 +5,10 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 
 /// Normalizes a [TensorBuffer] with given mean and stddev: output = (input - mean) / stddev.
 class NormalizeOp implements TensorOperator {
-  List<double> mean;
-  List<double> stddev;
-  int numChannels;
-  bool isIdentityOp;
+  late List<double> mean;
+  late List<double> stddev;
+  late int numChannels;
+  late bool isIdentityOp;
 
   /// Initializes a NormalizeOp. When being called, it creates a new [TensorBuffer], which
   /// satisfies:
@@ -117,7 +117,7 @@ class NormalizeOp implements TensorOperator {
             "Number of means (stddevs) is not same with number of channels (size of last axis).");
 
     int flatSize = input.getFlatSize();
-    List<double> values = List(flatSize);
+    List<double> values = List.filled(flatSize, 0);
     int j = 0;
     for (int i = 0; i < flatSize; i++) {
       values[i] = (input.getDoubleValue(i) - mean[j]) / stddev[j];

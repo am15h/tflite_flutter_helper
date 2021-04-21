@@ -12,12 +12,12 @@ import 'package:meta/meta.dart';
 class SequentialProcessor<T> implements Processor<T> {
   /// List of operators added to this [SequentialProcessor].
   @protected
-  List<Operator<T>> operatorList;
+  late List<Operator<T>> operatorList;
 
   /// The [Map] between the operator name and the corresponding op indexes in [operatorList].
   /// An operator may be added multiple times into this [SequentialProcessor].
   @protected
-  Map<String, List<int>> operatorIndex;
+  late Map<String, List<int>> operatorIndex;
 
   @protected
   SequentialProcessor(SequentialProcessorBuilder<T> builder) {
@@ -53,7 +53,7 @@ class SequentialProcessorBuilder<T> {
     if (!_operatorIndex.containsKey(operatorName)) {
       _operatorIndex[operatorName] = <int>[];
     }
-    _operatorIndex[operatorName].add(_operatorList.length - 1);
+    _operatorIndex[operatorName]!.add(_operatorList.length - 1);
     return this;
   }
 

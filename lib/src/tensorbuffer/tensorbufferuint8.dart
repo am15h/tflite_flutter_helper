@@ -31,7 +31,7 @@ class TensorBufferUint8 extends TensorBuffer {
 
   @override
   List<int> getIntList() {
-    List<int> arr = List(flatSize);
+    List<int> arr = List.filled(flatSize, 0);
     for (int i = 0; i < flatSize; i++) {
       arr[i] = byteData.getUint8(i);
     }
@@ -49,7 +49,7 @@ class TensorBufferUint8 extends TensorBuffer {
   }
 
   @override
-  void loadList(List src, {List<int> shape}) {
+  void loadList(List src, {required List<int> shape}) {
     SupportPreconditions.checkNotNull(src,
         message: "The array to be loaded cannot be null.");
     SupportPreconditions.checkArgument(

@@ -46,7 +46,7 @@ class TensorImage {
   ///
   /// Load image as a [File] and create [TensorImage].
   static TensorImage fromFile(File imageFile) {
-    Image image = decodeImage(imageFile.readAsBytesSync());
+    Image image = decodeImage(imageFile.readAsBytesSync())!;
     TensorImage tensorImage = TensorImage();
     tensorImage.loadImage(image);
     return tensorImage;
@@ -126,7 +126,7 @@ class TensorImage {
   /// Gets the current data type.
   ///
   /// Currently only UINT8 and FLOAT32 are possible.
-  TfLiteType get dataType => _container.tfLiteType;
+  TfLiteType get dataType => _container.tfLiteType!;
 
   /// Gets the current data type.
   ///
@@ -136,7 +136,7 @@ class TensorImage {
   /// Gets the current data type.
   ///
   /// Currently only UINT8 and FLOAT32 are possible.
-  TfLiteType get tfLiteType => _container.tfLiteType;
+  TfLiteType get tfLiteType => _container.tfLiteType!;
 
   /// Returns the underlying [Image] representation of this [TensorImage].
   ///
@@ -185,37 +185,37 @@ class TensorImage {
 
 // Handles RGB image data storage strategy of TensorBuffer.
 class _ImageContainer {
-  TensorBuffer _bufferImage;
-  bool _isBufferUpdated;
-  Image _image;
+  late TensorBuffer? _bufferImage;
+  late Image? _image;
 
-  bool _isImageUpdated;
-  final TfLiteType tfLiteType;
+  late bool _isBufferUpdated;
+  late bool _isImageUpdated;
+  late final TfLiteType? tfLiteType;
 
-  static final int argbElementBytes = 4;
+  static final int? argbElementBytes = 4;
 
   _ImageContainer(this.tfLiteType);
 
   Image get image {
-    if (_isImageUpdated) return _image;
+    if (_isImageUpdated) return _image!;
     if (!_isBufferUpdated)
       throw StateError(
           "Both buffer and bitmap data are obsolete. Forgot to call TensorImage.loadImage?");
-    if (_bufferImage.getDataType() != TfLiteType.uint8) {
+    if (_bufferImage!.getDataType() != TfLiteType.uint8) {
       throw StateError(
           "TensorImage is holding a float-value image which is not able to convert a Image.");
     }
-    int reqAllocation = _bufferImage.getFlatSize() * argbElementBytes;
-    if (_image == null || _image.getBytes().length < reqAllocation) {
-      List<int> shape = _bufferImage.getShape();
+    num reqAllocation = _bufferImage!.getFlatSize() * argbElementBytes!;
+    if (_image == null || _image!.getBytes().length < reqAllocation) {
+      List<int> shape = _bufferImage!.getShape();
       int h = shape[shape.length - 3];
       int w = shape[shape.length - 2];
       _image = Image(w, h);
     }
 
-    _image = ImageConversion.convertTensorBufferToImage(_bufferImage, _image);
+    _image = ImageConversion.convertTensorBufferToImage(_bufferImage!, _image!);
     _isImageUpdated = true;
-    return _image;
+    return _image!;
   }
 
   // Internal method to set the image source-of-truth with a image.
@@ -227,7 +227,7 @@ class _ImageContainer {
 
   TensorBuffer get tensorBuffer {
     if (_isBufferUpdated) {
-      return _bufferImage;
+      return _bufferImage!;
     }
     SupportPreconditions.checkArgument(
       _isImageUpdated,
@@ -236,14 +236,14 @@ class _ImageContainer {
     );
     int requiredFlatSize = image.width * image.height * 3;
     if (_bufferImage == null ||
-        (!_bufferImage.isDynamic &&
-            _bufferImage.getFlatSize() != requiredFlatSize)) {
-      _bufferImage = TensorBuffer.createDynamic(tfLiteType);
+        (!_bufferImage!.isDynamic &&
+            _bufferImage!.getFlatSize() != requiredFlatSize)) {
+      _bufferImage = TensorBuffer.createDynamic(tfLiteType!);
     }
 
-    ImageConversion.convertImageToTensorBuffer(_image, _bufferImage);
+    ImageConversion.convertImageToTensorBuffer(_image!, _bufferImage!);
     _isBufferUpdated = true;
-    return _bufferImage;
+    return _bufferImage!;
   }
 
   // Internal method to set the image source-of-truth with a TensorBuffer.
@@ -274,7 +274,7 @@ class _ImageContainer {
   }
 
   int _getBufferDimensionSize(int dim) {
-    List<int> shape = _bufferImage.getShape();
+    List<int> shape = _bufferImage!.getShape();
     // The defensive check is needed because bufferImage might be invalidly changed by user
     // (a.k.a internal data is corrupted)
     TensorImage.checkImageTensorShape(shape);

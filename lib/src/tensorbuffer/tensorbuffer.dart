@@ -10,19 +10,19 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
 abstract class TensorBuffer {
   /// Where the data is stored
   @protected
-  ByteData byteData;
+  late ByteData byteData;
 
   /// Shape of the tensor
   @protected
-  List<int> shape;
+  late List<int> shape;
 
   /// Number of elements in the buffer. It will be changed to a proper value in the constructor.
   @protected
-  int flatSize = -1;
+  late int flatSize = -1;
 
   /// Indicator of whether this buffer is dynamic or fixed-size. Fixed-size buffers will have
   ///  pre-allocated memory and fixed size. While the size of dynamic buffers can be changed.
-  bool _isDynamic;
+  late bool _isDynamic;
 
   /// Creates a [TensorBuffer] with specified [shape] and [TfLiteType]. Here are some
   /// examples:
@@ -165,7 +165,7 @@ abstract class TensorBuffer {
   /// casted to uint8 by {255, 0}.
   ///
   /// If [shape] is null then [TensorBuffer.shape] is used.
-  void loadList(List<dynamic> src, {List<int> shape});
+  void loadList(List<dynamic> src, {required List<int> shape});
 
   /// Loads a byte buffer into this [TensorBuffer] with specific [shape].
   ///
@@ -177,7 +177,7 @@ abstract class TensorBuffer {
   /// Throws [ArgumentError.notNull] if [buffer] is null.
   /// Throws [ArgumentError] if the size of [buffer] in bytes and [getTypeSize] * [flatSize] do not
   /// match.
-  void loadBuffer(ByteBuffer buffer, {List<int> shape}) {
+  void loadBuffer(ByteBuffer buffer, {List<int>? shape}) {
     SupportPreconditions.checkNotNull(buffer,
         message: "Byte Buffer cannot be null");
 

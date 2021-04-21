@@ -22,9 +22,9 @@ import 'category.dart';
 /// See [FileUtil.loadLabels] to load labels from a label file (plain text file whose each line is a
 /// label) in assets simply.
 class TensorLabel {
-  Map<int, List<String>> _axisLabels;
-  TensorBuffer _tensorBuffer;
-  List<int> _shape;
+  late Map<int, List<String>> _axisLabels;
+  late TensorBuffer _tensorBuffer;
+  late List<int> _shape;
 
   /// Creates a TensorLabel object which is able to label on the axes of multi-dimensional tensors.
   ///
@@ -91,7 +91,7 @@ class TensorLabel {
     SupportPreconditions.checkArgument(_axisLabels.containsKey(labeledAxis),
         errorMessage:
             "get a <String, TensorBuffer> map requires the labels are set on the first non-1 axis.");
-    List<String> labels = _axisLabels[labeledAxis];
+    List<String> labels = _axisLabels[labeledAxis]!;
 
     TfLiteType dataType = _tensorBuffer.getDataType();
     int typeSize = _tensorBuffer.getTypeSize();
@@ -127,7 +127,7 @@ class TensorLabel {
     SupportPreconditions.checkState(labeledAxis == _shape.length - 1,
         errorMessage:
             "get a <String, Scalar> map is only valid when the only labeled axis is the last one.");
-    List<String> labels = _axisLabels[labeledAxis];
+    List<String> labels = _axisLabels[labeledAxis]!;
     List<double> data = _tensorBuffer.getDoubleList();
     SupportPreconditions.checkState(labels.length == data.length);
     Map<String, double> result = {};
@@ -153,7 +153,7 @@ class TensorLabel {
     SupportPreconditions.checkState(labeledAxis == _shape.length - 1,
         errorMessage:
             "get a Category list is only valid when the only labeled axis is the last one.");
-    List<String> labels = _axisLabels[labeledAxis];
+    List<String> labels = _axisLabels[labeledAxis]!;
     List<double> data = _tensorBuffer.getDoubleList();
     SupportPreconditions.checkState(labels.length == data.length);
     List<Category> result = [];

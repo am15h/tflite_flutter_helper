@@ -14,11 +14,11 @@ import 'package:tuple/tuple.dart';
 ///
 /// See [ResizeOp] for resizing images while stretching / compressing the content.
 class ResizeWithCropOrPadOp implements ImageOperator {
-  final int _targetHeight;
-  final int _targetWidth;
-  final int _cropLeft;
-  final int _cropTop;
-  final Image _output;
+  late final int _targetHeight;
+  late final int _targetWidth;
+  late final int? _cropLeft;
+  late final int? _cropTop;
+  late final Image _output;
 
   /// Creates a ResizeWithCropOrPadOp which could crop/pad images to height: [_targetHeight] &
   /// width: [_targetWidth]. It adopts center-crop and zero-padding.
@@ -45,8 +45,8 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     int dstB;
     int w = input.width;
     int h = input.height;
-    int cropWidthCustomPosition = _cropLeft;
-    int cropHeightCustomPosition = _cropTop;
+    int? cropWidthCustomPosition = _cropLeft;
+    int? cropHeightCustomPosition = _cropTop;
 
     _checkCropPositionArgument(w, h);
 
@@ -101,7 +101,7 @@ class ResizeWithCropOrPadOp implements ImageOperator {
   }
 
   Tuple2<int, int> _computeCropPosition(int targetSize, int imageSize,
-      [int cropPosition]) {
+      [int? cropPosition]) {
     int srcLT;
     int srcRB;
 
@@ -127,9 +127,9 @@ class ResizeWithCropOrPadOp implements ImageOperator {
     // Check crop position input if both provided
     if (_cropLeft != null && _cropTop != null) {
       // Return an error if the crop position is outside of the image
-      if ((_cropLeft + _targetWidth > w) || (_cropTop + _targetHeight > h)) {
-        int leftWidth = _cropLeft + _targetWidth;
-        int bottomHeight = _cropTop + _targetHeight;
+      if ((_cropLeft! + _targetWidth > w) || (_cropTop! + _targetHeight > h)) {
+        int leftWidth = _cropLeft! + _targetWidth;
+        int bottomHeight = _cropTop! + _targetHeight;
         throw ArgumentError(
             "The crop position is outside the image : crop(x:x+cropWidth,y+cropHeight) = ($_cropLeft:$leftWidth, $_cropTop:$bottomHeight) not in imageSize(x,y) = ($w, $h)");
       }
@@ -158,14 +158,14 @@ class ResizeWithCropOrPadOp implements ImageOperator {
   }
 
   Image _drawImage(Image dst, Image src,
-      {int dstX,
-      int dstY,
-      int dstW,
-      int dstH,
-      int srcX,
-      int srcY,
-      int srcW,
-      int srcH,
+      {int? dstX,
+      int? dstY,
+      int? dstW,
+      int? dstH,
+      int? srcX,
+      int? srcY,
+      int? srcW,
+      int? srcH,
       bool blend = false}) {
     dstX ??= 0;
     dstY ??= 0;
