@@ -24,11 +24,10 @@ dependencies:
   logger: ^1.0.0
 
   path_provider:
-  tflite_flutter: ^0.7.0
+  tflite_flutter: ^0.8.0
   tflite_flutter_helper:
     path:
       ../../
-  e2e: ^0.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -37,6 +36,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  integration_test:
+    sdk: flutter    
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -2,7 +2,7 @@ import 'package:imageclassification/classifier.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 class ClassifierFloat extends Classifier {
-  ClassifierFloat({int numThreads}) : super(numThreads: numThreads);
+  ClassifierFloat({int? numThreads}) : super(numThreads: numThreads);
 
   @override
   String get modelName => 'mobilenet_v1_1.0_224.tflite';
