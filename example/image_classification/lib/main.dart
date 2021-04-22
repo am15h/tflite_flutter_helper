@@ -23,27 +23,27 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Classifier _classifier;
+  late Classifier _classifier;
 
   var logger = Logger();
 
-  File _image;
+  File? _image;
   final picker = ImagePicker();
 
-  Image _imageWidget;
+  Image? _imageWidget;
 
-  img.Image fox;
+  img.Image? fox;
 
-  Category category;
+  Category? category;
 
   @override
   void initState() {
@@ -55,17 +55,15 @@ class _MyHomePageState extends State<MyHomePage> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = File(pickedFile.path);
-      _imageWidget = Image.file(
-        _image,
-      );
+      _image = File(pickedFile!.path);
+      _imageWidget = Image.file(_image!);
 
       _predict();
     });
   }
 
   void _predict() async {
-    img.Image imageInput = img.decodeImage(_image.readAsBytesSync());
+    img.Image imageInput = img.decodeImage(_image!.readAsBytesSync())!;
     var pred = _classifier.predict(imageInput);
 
     setState(() {
@@ -98,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 36,
           ),
           Text(
-            category != null ? category.label : '',
+            category != null ? category!.label : '',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
           SizedBox(
@@ -106,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Text(
             category != null
-                ? 'Confidence: ${category.score.toStringAsFixed(3)}'
+                ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
                 : '',
             style: TextStyle(fontSize: 16),
           ),

@@ -52,13 +52,13 @@ class BoundingBoxUtils {
   /// Throws [ArgumentError] if [tensor] has data type other than
   /// [TfLiteType.float32].
   static List<Rect> convert({
-    TensorBuffer tensor,
+    required TensorBuffer tensor,
     List<int> valueIndex = const <int>[0, 1, 2, 3],
-    int boundingBoxAxis,
-    BoundingBoxType boundingBoxType,
-    CoordinateType coordinateType,
-    int height,
-    int width,
+    required int boundingBoxAxis,
+    required BoundingBoxType boundingBoxType,
+    required CoordinateType coordinateType,
+    required int height,
+    required int width,
   }) {
     List<int> shape = tensor.getShape();
     SupportPreconditions.checkArgument(
@@ -101,7 +101,7 @@ class BoundingBoxUtils {
 
     List<Rect> boundingBoxList = [];
 
-    List<double> values = List(4);
+    List<double> values = List.filled(4, 0);
     List<double> doubleList = tensor.getDoubleList();
 
     for (int i = 0; i < a; i++) {
@@ -120,53 +120,68 @@ class BoundingBoxUtils {
   static Rect _convertOneBoundingBox(List<double> values, BoundingBoxType type,
       CoordinateType coordinateType, int height, int width,
       [List<int> valueIndex = const [0, 1, 2, 3]]) {
-    List<double> orderedValues = List(4);
+    List<double> orderedValues = List.filled(4, 0);
     for (int i = 0; i < 4; i++) {
       orderedValues[i] = values[valueIndex[i]];
     }
 
     switch (type) {
       case BoundingBoxType.BOUNDARIES:
-        return _convertFromBoundaries(orderedValues, coordinateType, height, width);
+        return _convertFromBoundaries(
+            orderedValues, coordinateType, height, width);
       case BoundingBoxType.UPPER_LEFT:
-        return _convertFromUpperLeft(orderedValues, coordinateType, height, width);
+        return _convertFromUpperLeft(
+            orderedValues, coordinateType, height, width);
       case BoundingBoxType.CENTER:
         return _convertFromCenter(orderedValues, coordinateType, height, width);
     }
-
-    throw ArgumentError('Cannot recognize BoundingBox.Type $type');
   }
 
   static Rect _convertFromBoundaries(List<double> values,
-      CoordinateType coordinateType, int height, int width) {
-    if (coordinateType == CoordinateType.RATIO) {
-      return Rect.fromLTRB(values[0] * width, values[1] * height,
-          values[2] * width, values[3] * height);
-    } else {
-      return Rect.fromLTRB(values[0], values[1], values[2], values[3]);
-    }
+      CoordinateType coordinateType, int imageHeight, int imageWidth) {
+    double left = values[0];
+    double top = values[1];
+    double right = values[2];
+    double bottom = values[3];
+    return _getRectF(
+        left, top, right, bottom, imageHeight, imageWidth, coordinateType);
   }
 
   static Rect _convertFromUpperLeft(List<double> values,
-      CoordinateType coordinateType, int height, int width) {
-    if (coordinateType == CoordinateType.PIXEL) {
-      return Rect.fromLTWH(values[0], values[1], values[2], values[3]);
-    } else {
-      throw UnsupportedError(
-          'CoordinateType.RATIO not supported with BoundingBoxType.UPPER_LEFT');
-    }
+      CoordinateType coordinateType, int imageHeight, int imageWidth) {
+    double left = values[0];
+    double top = values[1];
+    double right = values[0] + values[2];
+    double bottom = values[1] + values[3];
+    return _getRectF(
+        left, top, right, bottom, imageHeight, imageWidth, coordinateType);
   }
 
   static Rect _convertFromCenter(List<double> values,
-      CoordinateType coordinateType, int height, int width) {
+      CoordinateType coordinateType, int imageHeight, int imageWidth) {
+    double centerX = values[0];
+    double centerY = values[1];
+    double w = values[2];
+    double h = values[3];
+
+    double left = centerX - w / 2;
+    double top = centerY - h / 2;
+    double right = centerX + w / 2;
+    double bottom = centerY + h / 2;
+    return _getRectF(
+        left, top, right, bottom, imageHeight, imageWidth, coordinateType);
+  }
+
+  static Rect _getRectF(double left, double top, double right, double bottom,
+      int imageHeight, int imageWidth, CoordinateType coordinateType) {
     if (coordinateType == CoordinateType.PIXEL) {
-      return Rect.fromCenter(
-          center: Offset(values[0], values[1]),
-          width: values[2],
-          height: values[3]);
+      return new Rect.fromLTRB(left, top, right, bottom);
+    } else if (coordinateType == CoordinateType.RATIO) {
+      return new Rect.fromLTRB(left * imageWidth, top * imageHeight,
+          right * imageWidth, bottom * imageHeight);
     } else {
-      throw UnsupportedError(
-          'CoordinateType.RATIO not supported with BoundingBoxType.CENTER');
+      throw new ArgumentError(
+          "Cannot convert coordinate type " + coordinateType.toString());
     }
   }
 }

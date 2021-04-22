@@ -60,7 +60,7 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
     while (opIterator.moveNext()) {
       heightIterator.moveNext();
       widthIterator.moveNext();
-      ImageOperator imageOperator = opIterator.current;
+      ImageOperator imageOperator = opIterator.current as ImageOperator;
       int height = heightIterator.current;
       int width = widthIterator.current;
       point = imageOperator.inverseTransform(point, height, width);
@@ -77,8 +77,8 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
         Point(rect.left, rect.top), inputImageHeight, inputImageWidth);
     Point p2 = inverseTransform(
         Point(rect.right, rect.bottom), inputImageHeight, inputImageWidth);
-    return Rect.fromLTRB(
-        min(p1.x, p2.x), min(p1.y, p2.y), max(p1.x, p2.x), max(p1.y, p2.y));
+    return Rect.fromLTRB(min(p1.x, p2.x) as double, min(p1.y, p2.y) as double,
+        max(p1.x, p2.x) as double, max(p1.y, p2.y) as double);
   }
 
   void updateNumberOfRotations(int k, int occurrence) {
@@ -86,7 +86,7 @@ class ImageProcessor extends SequentialProcessor<TensorImage> {
         operatorIndex.containsKey(Rot90Op().runtimeType.toString()),
         errorMessage: "The Rot90Op has not been added to the ImageProcessor.");
 
-    List<int> indexes = operatorIndex[Rot90Op().runtimeType.toString()];
+    List<int> indexes = operatorIndex[Rot90Op().runtimeType.toString()]!;
     SupportPreconditions.checkElementIndex(occurrence, indexes.length,
         desc: "occurrence");
 

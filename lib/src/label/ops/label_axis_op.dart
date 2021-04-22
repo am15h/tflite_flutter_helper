@@ -9,7 +9,7 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 /// Apply on a [TensorBuffer] to get a [TensorLabel] that could output a Map, which is
 /// a pair of the label name and the corresponding TensorBuffer value.
 class LabelAxisOp {
-  Map<int, List<String>> _axisLabels;
+  late Map<int, List<String>> _axisLabels;
 
   @protected
   LabelAxisOp(LabelAxisOpBuilder builder) {
@@ -25,7 +25,7 @@ class LabelAxisOp {
 
 /// Builder class to build a LabelTensor Operator.
 class LabelAxisOpBuilder {
-  Map<int, List<String>> _axisLabels;
+  late Map<int, List<String>> _axisLabels;
 
   @protected
   LabelAxisOpBuilder() {

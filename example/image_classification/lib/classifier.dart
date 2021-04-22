@@ -7,16 +7,16 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 abstract class Classifier {
-  Interpreter interpreter;
-  InterpreterOptions _interpreterOptions;
+  late Interpreter interpreter;
+  late InterpreterOptions _interpreterOptions;
 
   var logger = Logger();
 
-  List<int> _inputShape;
-  List<int> _outputShape;
+  late List<int> _inputShape;
+  late List<int> _outputShape;
 
-  TensorImage _inputImage;
-  TensorBuffer _outputBuffer;
+  late TensorImage _inputImage;
+  late TensorBuffer _outputBuffer;
 
   TfLiteType _outputType = TfLiteType.uint8;
 
@@ -24,16 +24,16 @@ abstract class Classifier {
 
   final int _labelsLength = 1001;
 
-  var _probabilityProcessor;
+  late var _probabilityProcessor;
 
-  List<String> labels;
+  late List<String> labels;
 
   String get modelName;
 
   NormalizeOp get preProcessNormalizeOp;
   NormalizeOp get postProcessNormalizeOp;
 
-  Classifier({int numThreads}) {
+  Classifier({int? numThreads}) {
     _interpreterOptions = InterpreterOptions();
 
     if (numThreads != null) {

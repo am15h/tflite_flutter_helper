@@ -51,11 +51,8 @@ class ImageConversion {
     List<int> intValues = image.data;
 
     List<int> shape = [h, w, 3];
-    List<int> rgbValues = List(h * w * 3);
+    List<int> rgbValues = List.filled(h * w * 3, 0);
     for (int i = 0, j = 0; i < intValues.length; i++) {
-      if (intValues[i] == null) {
-        print(i);
-      }
       rgbValues[j++] = ((intValues[i]) & 0xFF);
       rgbValues[j++] = ((intValues[i] >> 8) & 0xFF);
       rgbValues[j++] = ((intValues[i] >> 16) & 0xFF);

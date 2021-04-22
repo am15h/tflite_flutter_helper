@@ -1,11 +1,11 @@
-import 'package:e2e/e2e.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:imageclassification/classifier.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
-import 'classifier_test.dart';
+import 'classifier_test_helper.dart';
 
 const sampleFileName = 'assets/lion.jpg';
 const labelFileName = 'assets/labels.txt';
@@ -15,18 +15,18 @@ const model_quant = 'mobilenet_v1_1.0_224_quant.tflite';
 
 //flutter driver --driver='test_driver/image_classification_e2e_test.dart' test/image_classification_e2e.dart
 void main() {
-  E2EWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('inference', () {
-    img.Image testImage;
+    late img.Image testImage;
 
     setUp(() async {
       ByteData imageFile = await rootBundle.load(sampleFileName);
-      testImage = img.decodeImage(imageFile.buffer.asUint8List());
+      testImage = img.decodeImage(imageFile.buffer.asUint8List())!;
     });
 
     group('float', () {
-      Classifier classifier;
+      late Classifier classifier;
 
       setUpAll(() {
         classifier = ClassifierFloatTest();
@@ -42,7 +42,7 @@ void main() {
       });
     });
     group('quant', () {
-      ClassiferTest classifier;
+      late ClassiferTest classifier;
 
       setUpAll(() {
         classifier = ClassifierQuantTest();
