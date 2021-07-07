@@ -25,7 +25,19 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
+  plugin:
+    platforms:
+      android:
+        package: com.tfliteflutter.tflite_flutter_helper
+        pluginClass: TfliteFlutterHelperPlugin
+      ios:
+        pluginClass: TfliteFlutterHelperPlugin
+      linux:
+        pluginClass: TfliteFlutterHelperPlugin
+      macos:
+        pluginClass: TfliteFlutterHelperPlugin
+      windows:
+        pluginClass: TfliteFlutterHelperPlugin
   # To add assets to your package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
