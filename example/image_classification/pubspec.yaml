@@ -24,7 +24,7 @@ dependencies:
   logger: ^1.0.0
 
   path_provider:
-  tflite_flutter: ^0.8.0
+  tflite_flutter: ^0.9.0
   tflite_flutter_helper:
     path:
       ../../
