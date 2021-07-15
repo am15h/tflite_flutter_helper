@@ -36,3 +36,6 @@ export 'src/label/tensor_label.dart';
 export 'src/tensorbuffer/tensorbuffer.dart';
 export 'src/tensorbuffer/tensorbufferfloat.dart';
 export 'src/tensorbuffer/tensorbufferuint8.dart';
+export 'src/audio/recorder_stream.dart';
+export 'src/audio/sound_stream.dart';
+export 'src/audio/tensor_audio.dart';

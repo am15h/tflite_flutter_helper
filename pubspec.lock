@@ -239,7 +239,7 @@ packages:
       name: tflite_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.0"
+    version: "0.9.0"
   tuple:
     dependency: "direct main"
     description:
