@@ -6,7 +6,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 class TensorAudio {
-  final String TAG = "TensorAudioDart";
+  static const String TAG = "TensorAudioDart";
   late final FloatRingBuffer buffer;
   late final TensorAudioFormat format;
 

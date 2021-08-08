@@ -59,7 +59,6 @@ class Classifier {
     TensorAudio tensorAudio = TensorAudio.create(TensorAudioFormat.create(1, _inputShape[0]), _inputShape[0]);
     tensorAudio.loadShortBytes(bytes);
     final pre = DateTime.now().millisecondsSinceEpoch - pres;
-
     print('Time to load audio tensor: $pre ms');
 
     print(tensorAudio.tensorBuffer.getDoubleList());

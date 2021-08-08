@@ -84,8 +84,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadMicChunks() async {
     // Try to load audio from a source and catch any errors.
     try {
+      final pres = DateTime.now().millisecondsSinceEpoch;
       final savePath = await save(_micChunks, sampleRate);
       await _player.setAudioSource(AudioSource.uri(Uri.file(savePath)));
+      final pre = DateTime.now().millisecondsSinceEpoch - pres;
+      print('Time to load audio tensor: $pre ms');
     } catch (e) {
       print("Error loading audio source: $e");
     }
