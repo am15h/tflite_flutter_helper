@@ -39,3 +39,5 @@ export 'src/tensorbuffer/tensorbufferuint8.dart';
 export 'src/audio/recorder_stream.dart';
 export 'src/audio/sound_stream.dart';
 export 'src/audio/tensor_audio.dart';
+export 'src/task/text/nl_classifier/nl_classifier.dart';
+export 'src/task/text/nl_classifier/nl_classifier_options.dart';

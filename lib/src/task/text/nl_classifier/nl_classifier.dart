@@ -13,7 +13,8 @@ class NLClassifier {
 
   NLClassifier._(this._classifier);
 
-  factory NLClassifier._create(String modelPath, NLClassifierOptions options) {
+  // TODO: create convenience constructors
+  factory NLClassifier.create(String modelPath, NLClassifierOptions options) {
     final classiferPtr =
         NLClassifierFromFileAndOptions(modelPath.toNativeUtf8(), options.base);
     return NLClassifier._(classiferPtr);
