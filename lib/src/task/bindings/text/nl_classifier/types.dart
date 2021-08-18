@@ -4,15 +4,6 @@ import 'package:ffi/ffi.dart';
 
 class TfLiteNLClassifier extends Opaque {}
 
-// struct NLClassifierOptions {
-// int input_tensor_index;
-// int output_score_tensor_index;
-// int output_label_tensor_index;
-// const char* input_tensor_name;
-// const char* output_score_tensor_name;
-// const char* output_label_tensor_name;
-// };
-
 class TfLiteNLClassifierOptions extends Struct {
   @Int32()
   external int inputTensorIndex;
@@ -68,4 +59,12 @@ class TfLiteBertNLClassifier extends Opaque {}
 class TfLiteBertNLClassifierOptions extends Struct {
   @Int32()
   external int maxSeqLen;
+
+  static Pointer<TfLiteBertNLClassifierOptions> allocate(
+    int maxSeqLen,
+  ) {
+    final result = calloc<TfLiteBertNLClassifierOptions>();
+    result.ref.maxSeqLen = maxSeqLen;
+    return result;
+  }
 }

@@ -236,9 +236,9 @@ packages:
   tflite_flutter:
     dependency: "direct main"
     description:
-      name: tflite_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../tflite_flutter_plugin"
+      relative: true
+    source: path
     version: "0.9.0"
   tuple:
     dependency: "direct main"

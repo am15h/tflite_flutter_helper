@@ -20,14 +20,14 @@ typedef _BertQuestionAnswererFromFile_native_t = Pointer<TfLiteBertQuestionAnswe
 
 // Invokes the encapsulated TFLite model and answers a question based on
 // context.
-Pointer<QaAnswers> Function(Pointer<TfLiteBertQuestionAnswerer> questionAnswerer,
+Pointer<TfLiteQaAnswers> Function(Pointer<TfLiteBertQuestionAnswerer> questionAnswerer,
     Pointer<Utf8> context, Pointer<Utf8> question)
 BertQuestionAnswererAnswer = tflitelib
     .lookup<NativeFunction<_BertQuestionAnswererAnswer_native_t>>(
     'BertQuestionAnswererAnswer')
     .asFunction();
 
-typedef _BertQuestionAnswererAnswer_native_t = Pointer<QaAnswers> Function(Pointer<TfLiteBertQuestionAnswerer> questionAnswerer,
+typedef _BertQuestionAnswererAnswer_native_t = Pointer<TfLiteQaAnswers> Function(Pointer<TfLiteBertQuestionAnswerer> questionAnswerer,
     Pointer<Utf8> context, Pointer<Utf8> question);
 
 // Deletes BertQuestionAnswerer instance
@@ -39,9 +39,9 @@ void Function(Pointer<TfLiteBertQuestionAnswerer>) BertQuestionAnswererDelete = 
 typedef _BertQuestionAnswererDelete_native_t = Void Function(Pointer<TfLiteBertQuestionAnswerer>);
 
 // Deletes BertQuestionAnswererQaAnswers instance
-void Function(Pointer<QaAnswers>) BertQuestionAnswererQaAnswersDelete = tflitelib
+void Function(Pointer<TfLiteQaAnswers>) BertQuestionAnswererQaAnswersDelete = tflitelib
     .lookup<NativeFunction<_BertQuestionAnswererQaAnswersDelete_native_t>>(
     'BertQuestionAnswererQaAnswersDelete')
     .asFunction();
 
-typedef _BertQuestionAnswererQaAnswersDelete_native_t = Void Function(Pointer<QaAnswers>);
+typedef _BertQuestionAnswererQaAnswersDelete_native_t = Void Function(Pointer<TfLiteQaAnswers>);

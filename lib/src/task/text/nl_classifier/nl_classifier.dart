@@ -13,8 +13,10 @@ class NLClassifier {
 
   NLClassifier._(this._classifier);
 
-  // TODO: create convenience constructors
-  factory NLClassifier.create(String modelPath, NLClassifierOptions options) {
+  factory NLClassifier.create(String modelPath, {NLClassifierOptions? options}) {
+    if(options == null) {
+      options = NLClassifierOptions();
+    }
     final classiferPtr =
         NLClassifierFromFileAndOptions(modelPath.toNativeUtf8(), options.base);
     return NLClassifier._(classiferPtr);
@@ -22,7 +24,7 @@ class NLClassifier {
 
   List<Category> classify(String text) {
     final ref = NLClassifierClassify(base, text.toNativeUtf8()).ref;
-    var categoryList = List.generate(
+    final categoryList = List.generate(
       ref.size,
       (i) => Category(
           ref.categories[i].text.toDartString(), ref.categories[i].score),
