@@ -73,8 +73,7 @@ class _MyAppState extends State<MyApp> {
     await session.configure(AudioSessionConfiguration.speech());
     // Listen to errors during playback.
     _player.playbackEventStream.listen(
-      (event) {
-      },
+      (event) {},
       onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
       },
@@ -99,7 +98,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Audio Classification'),
+          backgroundColor: Colors.orange,
+          title: const Text(
+            'TFL Audio Classification',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -107,16 +110,25 @@ class _MyAppState extends State<MyApp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                IconButton(
-                  iconSize: 64.0,
-                  icon: Icon(_isRecording ? Icons.mic_off : Icons.mic),
-                  onPressed: _isRecording ? () {
-                    _recorder.stop();
-                    _loadMicChunks();
-                  } : () {
-                    _micChunks = [];
-                    _recorder.start();
-                  },
+                Column(
+                  children: [
+                    IconButton(
+                      iconSize: 64.0,
+                      icon: Icon(_isRecording ? Icons.mic_off : Icons.mic),
+                      onPressed: _isRecording
+                          ? () {
+                              _recorder.stop();
+                              _loadMicChunks();
+                            }
+                          : () {
+                              _micChunks = [];
+                              _recorder.start();
+                            },
+                    ),
+                    Text(
+                      'Record',
+                    ),
+                  ],
                 ),
                 StreamBuilder<PlayerState>(
                   stream: _player.playerStateStream,
@@ -166,17 +178,20 @@ class _MyAppState extends State<MyApp> {
                 child: Text("Predict"),
               ),
             ),
-            if(prediction != null)
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Text(prediction!.label, style: TextStyle(fontWeight: FontWeight.bold),),
-                  SizedBox(height: 4),
-                  Text(prediction!.score.toString()),
-                ],
+            if (prediction != null)
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Text(
+                      prediction!.label,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Text(prediction!.score.toString()),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
