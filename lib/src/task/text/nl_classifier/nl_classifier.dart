@@ -55,12 +55,12 @@ class NLClassifier {
     if (options == null) {
       options = NLClassifierOptions();
     }
-    final classiferPtr =
+    final nativePtr =
         NLClassifierFromFileAndOptions(modelPath.toNativeUtf8(), options.base);
-    if (classiferPtr == nullptr) {
+    if (nativePtr == nullptr) {
       throw FileSystemException("Failed to create NLClassifier.", modelPath);
     }
-    return NLClassifier._(classiferPtr);
+    return NLClassifier._(nativePtr);
   }
 
   /// Create [NLClassifier] from [modelFile].
