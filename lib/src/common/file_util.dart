@@ -53,12 +53,15 @@ class FileUtil {
     return list;
   }
 
-  /// Loads a file from project assets on the device
-  static Future<File> loadFileOnDevice(String fileAssetLocation) async {
+  /// Loads a file from project assets at [fileAssetPath] on the device
+  ///
+  /// Eg. 'assets/models/my_model.tflite'
+  static Future<File> loadFileOnDevice(String fileAssetPath) async {
     final appDir = await getTemporaryDirectory();
     final appPath = appDir.path;
-    final fileOnDevice = File('$appPath/$fileAssetLocation');
-    final rawAssetFile = await rootBundle.load('$fileAssetLocation');
+    final fileName = fileAssetPath.split('/').last;
+    final fileOnDevice = File('$appPath/$fileName');
+    final rawAssetFile = await rootBundle.load('$fileAssetPath');
     final rawBytes = rawAssetFile.buffer.asUint8List();
     await fileOnDevice.writeAsBytes(rawBytes, flush: true);
     return fileOnDevice;
