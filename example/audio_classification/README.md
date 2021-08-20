@@ -7,6 +7,10 @@ Real-time Audio Classification in flutter. It uses:
 * [YAMNet](https://tfhub.dev/google/lite-model/yamnet/classification/tflite/1),
   an audio event classification model.
 
+<p align="center">
+  <img src="audio_demo.gif" alt="animated" />
+</p>
+
 ## Build and run
 
 ### Step 1. Clone TFLite Flutter Helper repository
