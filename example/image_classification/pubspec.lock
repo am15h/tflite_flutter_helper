@@ -333,17 +333,17 @@ packages:
   tflite_flutter:
     dependency: "direct main"
     description:
-      path: "../../../tflite_flutter_plugin"
-      relative: true
-    source: path
-    version: "0.9.0"
+      name: tflite_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.0"
   tflite_flutter_helper:
     dependency: "direct main"
     description:
       path: "../.."
       relative: true
     source: path
-    version: "0.2.1"
+    version: "0.2.0"
   tuple:
     dependency: transitive
     description:
