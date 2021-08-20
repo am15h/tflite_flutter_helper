@@ -13,7 +13,7 @@ const labelFileName = 'assets/labels.txt';
 const model_float = 'mobilenet_v1_1.0_224.tflite';
 const model_quant = 'mobilenet_v1_1.0_224_quant.tflite';
 
-//flutter driver --driver='test_driver/image_classification_e2e_test.dart' test/image_classification_e2e.dart
+//flutter driver --driver=test_driver/integration_test.dart --target=integration_test/image_classification_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
