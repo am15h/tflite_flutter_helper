@@ -1,3 +1,6 @@
+# [0.2.2] - Image Package Update
+* Update Image APIs.
+
 # [0.2.1] - TFLite Flutter dependency update
 
 * Updated to tflite_flutter: ^0.9.0
