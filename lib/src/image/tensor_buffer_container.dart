@@ -85,17 +85,18 @@ class TensorBufferContainer implements BaseImageContainer {
     throw UnsupportedError(
         "Converting from TensorBuffer to android.media.Image is unsupported.");
   }
+
   @override
   int get width {
     // In case the underlying buffer in Tensorbuffer gets updated after TensorImage is created.
-    _colorSpaceType.assertNumElements(_buffer.getFlatSize(), height, width);
+    _colorSpaceType.assertNumElements(_buffer.getFlatSize(), _height, _width);
     return _width;
   }
 
   @override
   int get height {
     // In case the underlying buffer in Tensorbuffer gets updated after TensorImage is created.
-    _colorSpaceType.assertNumElements(_buffer.getFlatSize(), height, width);
+    _colorSpaceType.assertNumElements(_buffer.getFlatSize(), _height, _width);
     return _height;
   }
 
