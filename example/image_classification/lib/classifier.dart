@@ -18,7 +18,8 @@ abstract class Classifier {
   late TensorImage _inputImage;
   late TensorBuffer _outputBuffer;
 
-  TfLiteType _outputType = TfLiteType.uint8;
+  late TfLiteType _inputType;
+  late TfLiteType _outputType;
 
   final String _labelsFileName = 'assets/labels.txt';
 
@@ -52,6 +53,7 @@ abstract class Classifier {
 
       _inputShape = interpreter.getInputTensor(0).shape;
       _outputShape = interpreter.getOutputTensor(0).shape;
+      _inputType = interpreter.getInputTensor(0).type;
       _outputType = interpreter.getOutputTensor(0).type;
 
       _outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
@@ -83,11 +85,9 @@ abstract class Classifier {
   }
 
   Category predict(Image image) {
-    if (interpreter == null) {
-      throw StateError('Cannot run inference, Intrepreter is null');
-    }
     final pres = DateTime.now().millisecondsSinceEpoch;
-    _inputImage = TensorImage.fromImage(image);
+    _inputImage = TensorImage(_inputType);
+    _inputImage.loadImage(image);
     _inputImage = _preProcess();
     final pre = DateTime.now().millisecondsSinceEpoch - pres;
 
@@ -108,9 +108,7 @@ abstract class Classifier {
   }
 
   void close() {
-    if (interpreter != null) {
-      interpreter.close();
-    }
+    interpreter.close();
   }
 }
 
