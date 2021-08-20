@@ -14,12 +14,10 @@ Android Support Library.
 Include `tflite_flutter: ^<latest_version>` in your pubspec.yaml. Follow the initial setup
 instructions given [here](https://github.com/am15h/tflite_flutter_plugin#most-important-initial-setup)
 
-## Image Processing
+### Basic image manipulation and conversion
 
 TFLite Helper depends on [flutter image package](https://pub.dev/packages/image) internally for
 Image Processing.
-
-### Basic image manipulation and conversion
 
 The TensorFlow Lite Support Library has a suite of basic image manipulation methods such as crop
 and resize. To use it, create an `ImageProcessor` and add the required operations.
@@ -40,6 +38,18 @@ TensorImage tensorImage = TensorImage.fromFile(imageFile);
 // Preprocess the image.
 // The image for imageFile will be resized to (224, 224)
 tensorImage = imageProcessor.process(tensorImage);
+```
+
+### Baisc audio data processing
+
+The TensorFlow Lite Support Library also defines a TensorAudio class wrapping some basic audio data processing methods. 
+
+```dart
+TensorAudio tensorAudio = TensorAudio.create(
+    TensorAudioFormat.create(1, sampleRate), size);
+tensorAudio.loadShortBytes(audioBytes);
+
+TensorBuffer inputBuffer = tensorAudio.tensorBuffer;
 ```
 
 ### Create output objects and run the model
@@ -140,9 +150,3 @@ QuantizationParams inputParams = interpreter.getInputTensor(0).params;
 // Quantization Params of output tensor at index 0
 QuantizationParams outputParams = interpreter.getOutputTensor(0).params;
 ```
-
-## Coming Soon
-
-* More image operations
-* Support for text-related applications.
-* Support for audio-related applications.
