@@ -163,7 +163,7 @@ final classifier = await NLClassifier.createFromAsset('assets/$_modelFileName',
 List<Category> predictions = classifier.classify(rawText);
 ```
 
-Sample app: [Text Classification](https://github.com/am15h/tflite_flutter_plugin/tree/master/example/lib) using Task Library.
+Sample app: [Text Classification](https://github.com/am15h/tflite_flutter_helper/tree/master/example/text_classification_task).
 
 ### Integrate BERT natural language classifier
 
