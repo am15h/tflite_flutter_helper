@@ -29,9 +29,7 @@ dependencies:
   tflite_flutter_helper:
     path:
       ../../
-  just_audio:
-  audio_session:
-
+  random_color: ^1.0.6-nullsafety
 dev_dependencies:
   flutter_test:
     sdk: flutter
