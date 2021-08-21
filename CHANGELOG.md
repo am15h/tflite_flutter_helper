@@ -1,3 +1,7 @@
+# [0.3.0] - Audio Support and Task Library
+* Added support for audio-cases.
+* Task Library for Text based applications.
+
 # [0.2.2] - Image Package Update
 * Update Image APIs.
 
