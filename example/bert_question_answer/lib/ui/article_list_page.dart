@@ -3,9 +3,9 @@ import 'package:bert_question_answer/data/qa_data.dart';
 import 'package:bert_question_answer/ui/question_answerer_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:random_color/random_color.dart';
 
 class ArticleListPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<QaData>>(
@@ -15,7 +15,7 @@ class ArticleListPage extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text("Choose a topic from the list"),
               ),
               Expanded(
@@ -24,8 +24,10 @@ class ArticleListPage extends StatelessWidget {
                   itemBuilder: (context, i) {
                     return ListTile(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return QuestionAnswererPage(data: snapshot.data!.elementAt(i));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return QuestionAnswererPage(
+                              data: snapshot.data!.elementAt(i));
                         }));
                       },
                       title: Text(snapshot.data!.elementAt(i).title),
