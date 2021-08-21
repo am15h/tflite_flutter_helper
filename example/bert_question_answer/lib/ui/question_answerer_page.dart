@@ -3,6 +3,7 @@ import 'package:bert_question_answer/data/qa_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:random_color/random_color.dart';
 
 class QuestionAnswererPage extends StatefulWidget {
   final QaData data;
@@ -17,17 +18,38 @@ class _QuestionAnswererPageState extends State<QuestionAnswererPage> {
   final controller = TextEditingController();
   late final BertQA classifier;
 
+  late List<Widget> suggestedQuestions;
+
   String? answer;
 
   @override
   void initState() {
     super.initState();
     classifier = BertQA();
+    suggestedQuestions = List.generate(
+      widget.data.questions.length,
+      (i) => GestureDetector(
+        onTap: () {
+          controller.text = widget.data.questions.elementAt(i);
+          getAnswer();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Chip(
+            backgroundColor: RandomColor()
+                .randomColor(colorBrightness: ColorBrightness.veryLight)
+                .withOpacity(0.5),
+            label: Text(widget.data.questions.elementAt(i)),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: BackButton(color: Colors.white),
         title: Text(
@@ -41,7 +63,13 @@ class _QuestionAnswererPageState extends State<QuestionAnswererPage> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Text(widget.data.content),
+                child: Card(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.data.content,
+                  ),
+                )),
               ),
             ),
             Expanded(
@@ -50,37 +78,25 @@ class _QuestionAnswererPageState extends State<QuestionAnswererPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
-                          color: answer != null
-                              ? Colors.orange
-                              : Colors.transparent),
-                      child: Column(
-                        children: [
-                          Text(answer ?? 'Ask Question'),
-                        ],
+                        color: answer != null
+                            ? Colors.orangeAccent
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        answer ?? 'Ask Question',
+                        style: TextStyle(
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     Container(
                       height: 60,
-                      child: ListView.builder(
+                      child: ListView(
                         scrollDirection: Axis.horizontal,
-                        itemCount: widget.data.questions.length,
-                        itemBuilder: (context, i) {
-                          return GestureDetector(
-                            onTap: () {
-                              controller.text =
-                                  widget.data.questions.elementAt(i);
-                              getAnswer();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Chip(
-                                label: Text(widget.data.questions.elementAt(i)),
-                              ),
-                            ),
-                          );
-                        },
+                        children: suggestedQuestions,
                       ),
                     ),
                     Row(
@@ -98,7 +114,10 @@ class _QuestionAnswererPageState extends State<QuestionAnswererPage> {
                         ),
                         IconButton(
                           onPressed: getAnswer,
-                          icon: Icon(Icons.arrow_right_alt_rounded),
+                          icon: Icon(
+                            Icons.arrow_upward_sharp,
+                            color: Colors.orange,
+                          ),
                         )
                       ],
                     ),
