@@ -1,3 +1,6 @@
+# [0.3.1] - Update camera plugin to v0.9+
+* Updated the camera plugin to v0.9+
+
 # [0.3.0] - Audio Support and Task Library
 * Added support for audio-cases.
 * Task Library for Text based applications.
