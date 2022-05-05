@@ -24,6 +24,7 @@ export 'src/common/tensor_operator.dart';
 export 'src/image/ops/resize_op.dart';
 export 'src/image/ops/resize_with_crop_or_pad_op.dart';
 export 'src/image/ops/rot90_op.dart';
+export 'src/image/ops/transform_to_grayscale_op.dart';
 export 'src/image/tensor_image.dart';
 export 'src/image/bounding_box_utils.dart';
 export 'src/image/image_processor.dart';
