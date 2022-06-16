@@ -1,25 +1,17 @@
 # TensorFlow Lite Flutter Helper Library
 
-Makes use of TensorFlow Lite Interpreter on Flutter easier by
-providing simple architecture for processing and manipulating
-input and output of TFLite Models.
-
-API design and documentation is identical to the TensorFlow Lite
-Android Support Library.
+TFLite Flutter Helper Library brings [TFLite Support Library](https://www.tensorflow.org/lite/inference_with_metadata/lite_support) and [TFLite Support Task Library](https://www.tensorflow.org/lite/inference_with_metadata/task_library/overview) to Flutter and helps users to develop ML and deploy TFLite models onto mobile devices quickly without compromising on performance.
 
 ## Getting Started
 
 ### Setup TFLite Flutter Plugin
 
-Include `tflite_flutter: ^<latest_version>` in your pubspec.yaml. Follow the initial setup
-instructions given [here](https://github.com/am15h/tflite_flutter_plugin#most-important-initial-setup)
+Follow the initial setup instructions given [here](https://github.com/am15h/tflite_flutter_plugin#most-important-initial-setup)
 
-## Image Processing
+### Basic image manipulation and conversion
 
 TFLite Helper depends on [flutter image package](https://pub.dev/packages/image) internally for
 Image Processing.
-
-### Basic image manipulation and conversion
 
 The TensorFlow Lite Support Library has a suite of basic image manipulation methods such as crop
 and resize. To use it, create an `ImageProcessor` and add the required operations.
@@ -41,6 +33,22 @@ TensorImage tensorImage = TensorImage.fromFile(imageFile);
 // The image for imageFile will be resized to (224, 224)
 tensorImage = imageProcessor.process(tensorImage);
 ```
+
+Sample app: [Image Classification](https://github.com/am15h/tflite_flutter_helper/tree/master/example/image_classification)
+
+### Basic audio data processing
+
+The TensorFlow Lite Support Library also defines a TensorAudio class wrapping some basic audio data processing methods.
+
+```dart
+TensorAudio tensorAudio = TensorAudio.create(
+    TensorAudioFormat.create(1, sampleRate), size);
+tensorAudio.loadShortBytes(audioBytes);
+
+TensorBuffer inputBuffer = tensorAudio.tensorBuffer;
+```
+
+Sample app: [Audio Classification](https://github.com/am15h/tflite_flutter_helper/tree/master/example/audio_classification)
 
 ### Create output objects and run the model
 
@@ -141,8 +149,39 @@ QuantizationParams inputParams = interpreter.getInputTensor(0).params;
 QuantizationParams outputParams = interpreter.getOutputTensor(0).params;
 ```
 
-## Coming Soon
+## Task Library
 
-* More image operations
-* Support for text-related applications.
-* Support for audio-related applications.
+Currently, Text based models like `NLClassifier`, `BertNLClassifier` and `BertQuestionAnswerer` are available to use with the Flutter Task Library.
+
+### Integrate Natural Langugae Classifier
+
+The Task Library's `NLClassifier` API classifies input text into different categories, and is a versatile and configurable API that can handle most text classification models. Detailed guide is available [here](https://www.tensorflow.org/lite/inference_with_metadata/task_library/nl_classifier).
+
+```dart
+final classifier = await NLClassifier.createFromAsset('assets/$_modelFileName',
+        options: NLClassifierOptions());
+List<Category> predictions = classifier.classify(rawText);
+```
+
+Sample app: [Text Classification](https://github.com/am15h/tflite_flutter_helper/tree/master/example/text_classification_task).
+
+### Integrate BERT natural language classifier
+
+The Task Library `BertNLClassifier` API is very similar to the `NLClassifier` that classifies input text into different categories, except that this API is specially tailored for Bert related models that require Wordpiece and Sentencepiece tokenizations outside the TFLite model. Detailed guide is available [here](https://www.tensorflow.org/lite/inference_with_metadata/task_library/bert_nl_classifier).
+
+```dart
+final classifier = await BertNLClassifier.createFromAsset('assets/$_modelFileName',
+        options: BertNLClassifierOptions());
+List<Category> predictions = classifier.classify(rawText);
+```
+
+### Integrate BERT question answerer
+
+The Task Library `BertQuestionAnswerer` API loads a Bert model and answers questions based on the content of a given passage. For more information, see the documentation for the Question-Answer model [here](https://www.tensorflow.org/lite/models/bert_qa/overview). Detailed guide is available [here](https://www.tensorflow.org/lite/inference_with_metadata/task_library/bert_question_answerer).
+
+```dart
+final bertQuestionAnswerer = await BertQuestionAnswerer.createFromAsset('assets/$_modelFileName');
+List<QaAnswer> answeres = bertQuestionAnswerer.answer(context, question);
+```
+
+Sample app: [Bert Question Answerer Sample](https://github.com/am15h/tflite_flutter_helper/tree/master/example/bert_question_answer)

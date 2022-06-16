@@ -24,7 +24,6 @@ dependencies:
   logger: ^1.0.0
 
   path_provider:
-  tflite_flutter: ^0.8.0
   tflite_flutter_helper:
     path:
       ../../
@@ -39,7 +38,7 @@ dev_dependencies:
   flutter_driver:
     sdk: flutter
   integration_test:
-    sdk: flutter    
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
