@@ -153,7 +153,7 @@ QuantizationParams outputParams = interpreter.getOutputTensor(0).params;
 
 Currently, Text based models like `NLClassifier`, `BertNLClassifier` and `BertQuestionAnswerer` are available to use with the Flutter Task Library.
 
-### Integrate Natural Langugae Classifier
+### Integrate Natural Language Classifier
 
 The Task Library's `NLClassifier` API classifies input text into different categories, and is a versatile and configurable API that can handle most text classification models. Detailed guide is available [here](https://www.tensorflow.org/lite/inference_with_metadata/task_library/nl_classifier).
 
