@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'types.dart';
 
-import 'package:tflite_flutter_helper/src/task/bindings/dlib.dart';
+import 'package:tflite_audio_detection/src/task/bindings/dlib.dart';
 
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 

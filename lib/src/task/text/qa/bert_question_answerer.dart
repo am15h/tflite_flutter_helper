@@ -2,12 +2,12 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_helper/src/common/file_util.dart';
-import 'package:tflite_flutter_helper/src/task/bindings/text/qa/bert_qa.dart';
-import 'package:tflite_flutter_helper/src/task/bindings/text/qa/types.dart';
+import 'package:tflite_audio_detection/src/common/file_util.dart';
+import 'package:tflite_audio_detection/src/task/bindings/text/qa/bert_qa.dart';
+import 'package:tflite_audio_detection/src/task/bindings/text/qa/types.dart';
 
 import 'package:ffi/ffi.dart';
-import 'package:tflite_flutter_helper/src/task/text/qa/question_answerer.dart';
+import 'package:tflite_audio_detection/src/task/text/qa/question_answerer.dart';
 
 import 'qa_answer.dart';
 

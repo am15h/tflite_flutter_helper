@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_helper/src/task/bindings/text/nl_classifier/types.dart';
+import 'package:tflite_audio_detection/src/task/bindings/text/nl_classifier/types.dart';
 
 /// Options to configure BertNLClassifier.
 class BertNLClassifierOptions {

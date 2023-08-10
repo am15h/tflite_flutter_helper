@@ -1,3 +1,0 @@
-package android
-
-rootProject.name = 'tflite_flutter_helper'

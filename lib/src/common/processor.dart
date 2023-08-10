@@ -1,4 +1,4 @@
-import 'package:tflite_flutter_helper/src/common/operator.dart';
+import 'package:tflite_audio_detection/src/common/operator.dart';
 
 /// Processes [T] object with prepared [Operator].
 abstract class Processor<T> {

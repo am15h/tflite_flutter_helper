@@ -2,11 +2,11 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_helper/src/common/file_util.dart';
-import 'package:tflite_flutter_helper/src/label/category.dart';
-import 'package:tflite_flutter_helper/src/task/bindings/text/nl_classifier/bert_nl_classifier.dart';
-import 'package:tflite_flutter_helper/src/task/bindings/text/nl_classifier/types.dart';
-import 'package:tflite_flutter_helper/src/task/text/nl_classifier/bert_nl_classifier_options.dart';
+import 'package:tflite_audio_detection/src/common/file_util.dart';
+import 'package:tflite_audio_detection/src/label/category.dart';
+import 'package:tflite_audio_detection/src/task/bindings/text/nl_classifier/bert_nl_classifier.dart';
+import 'package:tflite_audio_detection/src/task/bindings/text/nl_classifier/types.dart';
+import 'package:tflite_audio_detection/src/task/text/nl_classifier/bert_nl_classifier_options.dart';
 
 /// Classifier API for NLClassification tasks with Bert models, categorizes string into different
 /// classes. The API expects a Bert based TFLite model with metadata populated.

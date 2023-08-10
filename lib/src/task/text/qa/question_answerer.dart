@@ -1,4 +1,4 @@
-import 'package:tflite_flutter_helper/src/task/text/qa/qa_answer.dart';
+import 'package:tflite_audio_detection/src/task/text/qa/qa_answer.dart';
 
 /// API to answer questions based on context. */
 abstract class QuestionAnswerer {

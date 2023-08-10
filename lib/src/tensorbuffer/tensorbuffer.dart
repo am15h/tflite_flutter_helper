@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
+import 'package:tflite_audio_detection/src/common/support_preconditions.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:meta/meta.dart';
-import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferfloat.dart';
-import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbufferuint8.dart';
+import 'package:tflite_audio_detection/src/tensorbuffer/tensorbufferfloat.dart';
+import 'package:tflite_audio_detection/src/tensorbuffer/tensorbufferuint8.dart';
 
 /// Represents the data buffer for either a model's input or its output.
 abstract class TensorBuffer {

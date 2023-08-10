@@ -1,7 +1,7 @@
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
-import 'package:tflite_flutter_helper/src/common/tensor_operator.dart';
-import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
+import 'package:tflite_audio_detection/src/common/support_preconditions.dart';
+import 'package:tflite_audio_detection/src/common/tensor_operator.dart';
+import 'package:tflite_audio_detection/src/tensorbuffer/tensorbuffer.dart';
 
 /// Normalizes a [TensorBuffer] with given mean and stddev: output = (input - mean) / stddev.
 class NormalizeOp implements TensorOperator {

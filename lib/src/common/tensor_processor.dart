@@ -1,6 +1,6 @@
-import 'package:tflite_flutter_helper/src/common/operator.dart';
-import 'package:tflite_flutter_helper/src/common/sequential_processor.dart';
-import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
+import 'package:tflite_audio_detection/src/common/operator.dart';
+import 'package:tflite_audio_detection/src/common/sequential_processor.dart';
+import 'package:tflite_audio_detection/src/tensorbuffer/tensorbuffer.dart';
 
 /// TensorProcessor is a helper class for preprocessing and postprocessing tensors. It could
 /// transform a [TensorBuffer] to another by executing a chain of [TensorOperator].

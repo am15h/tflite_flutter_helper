@@ -1,5 +1,4 @@
-import 'package:tflite_flutter_helper/src/common/support_preconditions.dart';
-import 'package:tflite_flutter_helper/src/image/image_processor.dart';
+import 'package:tflite_audio_detection/src/common/support_preconditions.dart';
 import 'operator.dart';
 import 'processor.dart';
 import 'package:meta/meta.dart';
