@@ -13,7 +13,7 @@ dependencies:
   meta: ^1.1.8
   quiver: ^3.0.1
   path_provider: ^2.0.1
-  tflite_flutter: ^0.9.0
+  tflite_flutter: 0.9.0
   tuple: ^2.0.0
   camera: ^0.10.4
   ffi: ^1.0.0
