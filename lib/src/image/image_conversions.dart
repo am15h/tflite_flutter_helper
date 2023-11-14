@@ -36,9 +36,9 @@ class ImageConversions {
 
   static Image convertGrayscaleTensorBufferToImage(TensorBuffer buffer) {
     // Convert buffer into Uint8 as needed.
-    TensorBuffer uint8Buffer = buffer.getDataType() == TfLiteType.uint8
+    TensorBuffer uint8Buffer = buffer.getDataType() == TensorType.uint8
         ? buffer
-        : TensorBuffer.createFrom(buffer, TfLiteType.uint8);
+        : TensorBuffer.createFrom(buffer, TensorType.uint8);
 
     final shape = uint8Buffer.getShape();
     final grayscale = ColorSpaceType.GRAYSCALE;
@@ -58,7 +58,7 @@ class ImageConversions {
     int flatSize = w * h * 3;
     List<int> shape = [h, w, 3];
     switch (buffer.getDataType()) {
-      case TfLiteType.uint8:
+      case TensorType.uint8:
         List<int> byteArr = List.filled(flatSize, 0);
         for (int i = 0, j = 0; i < intValues.length; i++) {
           byteArr[j++] = ((intValues[i]) & 0xFF);
@@ -67,7 +67,7 @@ class ImageConversions {
         }
         buffer.loadList(byteArr, shape: shape);
         break;
-      case TfLiteType.float32:
+      case TensorType.float32:
         List<double> floatArr = List.filled(flatSize, 0.0);
         for (int i = 0, j = 0; i < intValues.length; i++) {
           floatArr[j++] = ((intValues[i]) & 0xFF).toDouble();

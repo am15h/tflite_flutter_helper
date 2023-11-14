@@ -10,7 +10,7 @@ class TensorAudio {
   late final FloatRingBuffer buffer;
   late final TensorAudioFormat format;
 
-  TensorAudio._(this.format, int sampleCount){
+  TensorAudio._(this.format, int sampleCount) {
     this.buffer = FloatRingBuffer._(sampleCount * format.channelCount);
   }
 
@@ -22,13 +22,12 @@ class TensorAudio {
     loadDoubleListOffset(src, 0, src.length);
   }
 
-  void loadDoubleListOffset(List<double> src, int offsetInFloat,
-      int sizeInFloat) {
+  void loadDoubleListOffset(
+      List<double> src, int offsetInFloat, int sizeInFloat) {
     checkArgument(
       sizeInFloat % format.channelCount == 0,
       message:
-      "Size ($sizeInFloat) needs to be a multiplier of the number of channels (${format
-          .channelCount})",
+          "Size ($sizeInFloat) needs to be a multiplier of the number of channels (${format.channelCount})",
     );
     buffer.loadOffset(src, offsetInFloat, sizeInFloat);
   }
@@ -56,10 +55,9 @@ class TensorAudio {
   }
 
   void loadListOffset(List<int> src, int offsetInShort, int sizeInShort) {
-    checkArgument(
-        offsetInShort + sizeInShort <= src.length,
-        message: "Index out of range. offset ($offsetInShort) + size ($sizeInShort) should <= newData.length (${src
-            .length})");
+    checkArgument(offsetInShort + sizeInShort <= src.length,
+        message:
+            "Index out of range. offset ($offsetInShort) + size ($sizeInShort) should <= newData.length (${src.length})");
     List<double> floatData = List.filled(sizeInShort, 0.0);
     for (int i = offsetInShort; i < sizeInShort; i++) {
       // Convert the data to PCM Float encoding i.e. values between -1 and 1
@@ -68,19 +66,14 @@ class TensorAudio {
     loadDoubleList(floatData);
   }
 
-
   /// Returns a float {@link TensorBuffer} holding all the available audio samples in {@link
   /// android.media.AudioFormat#ENCODING_PCM_FLOAT} i.e. values are in the range of [-1, 1].
   TensorBuffer get tensorBuffer {
     ByteBuffer byteBuffer = buffer.buffer;
     TensorBuffer tensorBuffer =
-    // TODO: Confirm Shape
-    TensorBuffer.createFixedSize(
-        [1, byteBuffer
-            .asFloat32List()
-            .length
-        ],
-        TfLiteType.float32);
+        // TODO: Confirm Shape
+        TensorBuffer.createFixedSize(
+            [1, byteBuffer.asFloat32List().length], TensorType.float32);
     tensorBuffer.loadBuffer(byteBuffer);
     return tensorBuffer;
   }
@@ -105,8 +98,8 @@ class TensorAudioFormat {
   static TensorAudioFormat create(int channelCount, int sampleRate) {
     checkArgument(channelCount > 0,
         message: "Number of channels should be greater than 0");
-    checkArgument(
-        sampleRate > 0, message: "Sample rate should be greater than 0");
+    checkArgument(sampleRate > 0,
+        message: "Sample rate should be greater than 0");
     return TensorAudioFormat._(channelCount, sampleRate);
   }
 
@@ -136,8 +129,7 @@ class FloatRingBuffer {
     checkArgument(
       offset + size <= newData.length,
       message:
-      "Index out of range. offset ($offset) + size ($size) should <= newData.length (${newData
-          .length})",
+          "Index out of range. offset ($offset) + size ($size) should <= newData.length (${newData.length})",
     );
     // If buffer can't hold all the data, only keep the most recent data of size buffer.length
     if (size > _buffer.length) {
@@ -164,9 +156,7 @@ class FloatRingBuffer {
 
   ByteBuffer get buffer {
     // TODO: Make sure there is no endianness issue
-    return Float32List
-        .fromList(_buffer)
-        .buffer;
+    return Float32List.fromList(_buffer).buffer;
   }
 
   int get capacity => _buffer.length;

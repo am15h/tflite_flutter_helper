@@ -82,7 +82,7 @@ class BoundingBoxUtils {
           "Bounding box index list length ${valueIndex.length} is not 4. Got index list $valueIndex",
     );
     SupportPreconditions.checkArgument(
-        tensor.getDataType() == TfLiteType.float32,
+        tensor.getDataType() == TensorType.float32,
         errorMessage:
             "Bounding Boxes only create from FLOAT32 buffers. Got: ${tensor.getDataType()}");
 

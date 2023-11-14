@@ -93,7 +93,7 @@ class TensorLabel {
             "get a <String, TensorBuffer> map requires the labels are set on the first non-1 axis.");
     List<String> labels = _axisLabels[labeledAxis]!;
 
-    TfLiteType dataType = _tensorBuffer.getDataType();
+    TensorType dataType = _tensorBuffer.getDataType();
     int typeSize = _tensorBuffer.getTypeSize();
     int flatSize = _tensorBuffer.getFlatSize();
 
